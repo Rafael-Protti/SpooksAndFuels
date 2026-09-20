@@ -302,22 +302,50 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>
     /// Função executada ao utilizar a Picareta.
-    /// Prepara o stub para destruir pedras e rochas no trilho futuramente.
+    /// Detecta pedras destrutíveis no raio de alcance e aplica o golpe.
     /// </summary>
     public void UsePickaxe()
     {
-        Debug.Log("[PlayerController] Usou a Picareta: Stub pronto para destruir pedras/rochas nos trilhos.");
-        // TODO: Detectar pedras/rochas na frente do jogador e aplicar dano/destruição.
+        bool hitSomething = false;
+        Vector3 attackCenter = transform.position + transform.forward * 1.0f;
+        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
+        foreach (var col in hitColliders)
+        {
+            DestructibleObject obj = col.GetComponentInParent<DestructibleObject>();
+            if (obj != null && obj.ObjectType == DestructibleType.Rock)
+            {
+                obj.TryHit(ToolType.Pickaxe);
+                hitSomething = true;
+            }
+        }
+        if (!hitSomething)
+        {
+            Debug.Log("[PlayerController] Picareta: Nenhuma pedra no alcance.");
+        }
     }
 
     /// <summary>
     /// Função executada ao utilizar o Machado.
-    /// Prepara o stub para destruir caixas e barris no cenário futuramente.
+    /// Detecta caixas destrutíveis no raio de alcance e aplica o golpe.
     /// </summary>
     public void UseAxe()
     {
-        Debug.Log("[PlayerController] Usou o Machado: Stub pronto para destruir caixas/barris do cenário.");
-        // TODO: Detectar caixas/barris na frente do jogador e aplicar dano/destruição.
+        bool hitSomething = false;
+        Vector3 attackCenter = transform.position + transform.forward * 1.0f;
+        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
+        foreach (var col in hitColliders)
+        {
+            DestructibleObject obj = col.GetComponentInParent<DestructibleObject>();
+            if (obj != null && obj.ObjectType == DestructibleType.Crate)
+            {
+                obj.TryHit(ToolType.Axe);
+                hitSomething = true;
+            }
+        }
+        if (!hitSomething)
+        {
+            Debug.Log("[PlayerController] Machado: Nenhuma caixa no alcance.");
+        }
     }
 
     private InteractableObject currentNearestInteractable;
