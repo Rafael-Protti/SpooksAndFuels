@@ -32,6 +32,10 @@ public class DestructibleObject : MonoBehaviour
     [Tooltip("Duração da agitação ao ser atingido")]
     [SerializeField] private float hitShakeDuration = 0.12f;
 
+    [Header("Loot")]
+    [Tooltip("Prefab do item a ser droppado (Madeira)")]
+    [SerializeField] private GameObject drop1;
+
     private int currentHealth;
     private Vector3 originalLocalScale;
     private bool isBeingDestroyed = false;
@@ -108,6 +112,7 @@ public class DestructibleObject : MonoBehaviour
             case DestructibleType.Crate:
                 // TODO: Instanciar prefab do item Madeira na posição do objeto.
                 Debug.Log($"[DestructibleObject] Stub: Droppou Madeira em {transform.position}");
+                Instantiate(drop1, transform.position, Quaternion.identity);
                 break;
         }
     }

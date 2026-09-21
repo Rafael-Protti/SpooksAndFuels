@@ -36,6 +36,9 @@ public class GhostEnemy : MonoBehaviour
     [Tooltip("Distância mínima de contato para aplicar o ataque")]
     [SerializeField] private float attackRadius = 1.2f;
 
+    public Transform drop1;
+    public Transform drop2;
+
     // Estado interno
     private int currentHealth;
     private float lastAttackTime = -999f;
@@ -191,6 +194,7 @@ public class GhostEnemy : MonoBehaviour
         {
             // TODO: Instanciar prefab do item Ectoplasma na posição atual
             Debug.Log($"[GhostEnemy] Stub: Droppou Ectoplasma na posição {transform.position}");
+            Instantiate(drop1, transform.position, Quaternion.identity);
         }
         else
         {
@@ -198,6 +202,7 @@ public class GhostEnemy : MonoBehaviour
             bool isSuperBoost = Random.value <= 0.3f; // 30% de chance de Super Ectoplasma
             string lootName = isSuperBoost ? "Super Ectoplasma (Boost)" : "Ectoplasma";
             Debug.Log($"[GhostEnemy] Stub: Droppou {lootName} na posição {transform.position}");
+            Instantiate(drop2, transform.position, Quaternion.identity);
         }
     }
 

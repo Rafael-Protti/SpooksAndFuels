@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Gerencia a locomotiva a vapor, sua saúde, combustível, movimento linear ao longo do trilho
@@ -55,13 +56,15 @@ public class LocomotiveController : MonoBehaviour
         currentHealth = maxHealth;
         currentFuel = maxFuel;
 
+        PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>(); 
+
         // Configurar o componente InteractableObject para prover o texto dinâmico ("Ligar" / "Desligar")
         InteractableObject interactable = GetComponent<InteractableObject>();
         if (interactable == null)
         {
             interactable = gameObject.AddComponent<InteractableObject>();
         }
-        interactable.SetDynamicActionTextProvider(() => isEngineOn ? "Desligar" : "Ligar");
+        interactable.SetDynamicActionTextProvider(() => player.CurrentEquippedItem != null ? "Abastecer" : isEngineOn ? "Desligar" : "Ligar");
     }
 
     private void Start()
@@ -240,6 +243,13 @@ public class LocomotiveController : MonoBehaviour
         {
             OnGhostCollision(ghost.gameObject);
         }
+        DestructibleObject destructible = other.GetComponent<DestructibleObject>();
+        if (destructible != null)
+        {
+            TakeDamage(1);
+            Destroy(other.gameObject);
+            StopEngine();
+        }
     }
 
     /// <summary>
@@ -273,6 +283,7 @@ public class LocomotiveController : MonoBehaviour
     {
         StopEngine();
         Debug.Log("[LocomotiveController] DERROTA! A locomotiva foi destruída!");
+        SceneManager.LoadScene("GameScene");
         // TODO: Tela de derrota.
     }
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Controlador do jogador (Fantasma) utilizando o novo Input System da Unity.
@@ -241,6 +242,7 @@ public class PlayerController : MonoBehaviour
     [Header("Tool Settings")]
     [Tooltip("Soquete de transformação onde a ferramenta equipada é anexada (ex: mão/cabeça)")]
     [SerializeField] private Transform toolSocket;
+    [SerializeField] private Transform itemSocket;
 
     [Header("Attack Settings")]
     [Tooltip("Raio de alcance do ataque do jogador")]
@@ -248,6 +250,8 @@ public class PlayerController : MonoBehaviour
 
     private ToolItem currentEquippedTool;
     public ToolItem CurrentEquippedTool => currentEquippedTool;
+    private CollectableObject currentEquippedItem;
+    public CollectableObject CurrentEquippedItem => currentEquippedItem;
 
     /// <summary>
     /// Função executada ao atacar.
@@ -413,6 +417,14 @@ public class PlayerController : MonoBehaviour
             LocomotiveController locomotive = interactable.GetComponent<LocomotiveController>();
             if (locomotive != null)
             {
+                if(currentEquippedItem != null)
+                {
+                    currentEquippedItem.AddCoal();
+                    Destroy(currentEquippedItem.gameObject);
+                    currentEquippedItem = null;
+                    return;
+                }
+
                 locomotive.ToggleEngine();
                 return;
             }
@@ -425,12 +437,36 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
+            CollectableObject item = interactable.GetComponent<CollectableObject>();
+            if (item != null)
+            {
+                PickupItem(item);
+                return;
+            }
+
             // TODO: Interagir com outros itens do chão, baús ou caixas.
             Debug.Log($"[PlayerController] Interagiu com {interactable.gameObject.name}: {interactable.GetActionText()}");
             return;
         }
 
         Debug.Log("[PlayerController] Nenhuma interação disponível no alcance.");
+    }
+
+    public void PickupItem(CollectableObject item)
+    {
+        if (item == null) return;
+
+        if(currentEquippedItem != null)
+        {
+            currentEquippedItem.Drop(item.transform);
+        }
+
+        currentEquippedItem = item;
+
+        currentEquippedItem.transform.position = itemSocket.transform.position;
+        currentEquippedItem.transform.SetParent(itemSocket);
+        currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = false;
+        currentEquippedItem.transform.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     /// <summary>
@@ -494,6 +530,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("[PlayerController] O jogador foi derrotado!");
         // TODO: Desencadear tela de derrota / Game Over.
+        SceneManager.LoadScene("GameScene");
     }
 
     private void OnDrawGizmosSelected()
