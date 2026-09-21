@@ -34,6 +34,9 @@ public class ToolItem : MonoBehaviour
     [Tooltip("Rotação local relativa ao soquete do jogador quando equipada")]
     [SerializeField] private Vector3 equippedLocalRotation = new Vector3(0f, 0f, 0f);
 
+    [Tooltip("Posição da ferramenta no vagão")]
+    [SerializeField] private Transform vagonLocation;
+
     private bool isEquipped;
     private Collider toolCollider;
     private InteractableObject interactable;
@@ -58,6 +61,12 @@ public class ToolItem : MonoBehaviour
         interactable.SetDynamicActionTextProvider(() => "Equipar");
     }
 
+    private void Start()
+    {
+        transform.position = vagonLocation.position;
+        transform.SetParent(vagonLocation);
+    }
+
     /// <summary>
     /// Equipa a ferramenta no soquete/mão do jogador.
     /// </summary>
@@ -65,15 +74,15 @@ public class ToolItem : MonoBehaviour
     {
         isEquipped = true;
 
+        transform.position = socket.transform.position;
+        originalLocalRotation = transform.rotation;
+
         if (transform.parent != socket)
         {
             transform.SetParent(socket);
         }
 
-        transform.localPosition = equippedLocalPosition;
-        transform.localRotation = Quaternion.Euler(equippedLocalRotation);
-        originalLocalRotation = transform.localRotation;
-
+        transform.localRotation = originalLocalRotation;
         if (toolCollider != null) toolCollider.enabled = false;
         if (interactable != null) interactable.enabled = false;
 
@@ -85,15 +94,21 @@ public class ToolItem : MonoBehaviour
     /// </summary>
     public void Drop(Vector3 dropPosition)
     {
+        StopAllCoroutines();
         isEquipped = false;
         transform.SetParent(null);
-        transform.position = dropPosition;
-        transform.rotation = Quaternion.identity;
+        // transform.position = dropPosition;
+        // transform.rotation = Quaternion.identity;
+
+        transform.position = vagonLocation.position;
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+        transform.SetParent(vagonLocation);
 
         if (toolCollider != null) toolCollider.enabled = true;
         if (interactable != null) interactable.enabled = true;
 
-        Debug.Log($"[ToolItem] {toolName} solta no chão na posição {dropPosition}.");
+        // Debug.Log($"[ToolItem] {toolName} solta no chão na posição {dropPosition}.");
+
     }
 
     /// <summary>

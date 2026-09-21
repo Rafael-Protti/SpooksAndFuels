@@ -99,6 +99,7 @@ public class LocomotiveController : MonoBehaviour
 
         trackPath.GetPositionAndRotationAtDistance(currentDistance, out Vector3 nextPos, out Quaternion nextRot, out bool isAtEnd);
 
+        nextPos.y = transform.position.y;
         transform.position = nextPos;
         transform.rotation = nextRot;
 
@@ -249,6 +250,7 @@ public class LocomotiveController : MonoBehaviour
         if (trackPath != null)
         {
             trackPath.GetPositionAndRotationAtDistance(currentDistance, out Vector3 pos, out Quaternion rot, out _);
+            pos = new Vector3(pos.x, transform.position.y, pos.z);
             transform.position = pos;
             transform.rotation = rot;
         }

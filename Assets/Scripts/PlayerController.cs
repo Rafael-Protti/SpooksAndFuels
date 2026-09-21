@@ -159,9 +159,9 @@ public class PlayerController : MonoBehaviour
         Vector3 rotatedPoint = platformDeltaRot * pointRelativeToPlatform;
         Vector3 rotationDeltaPos = rotatedPoint - pointRelativeToPlatform;
 
-        Vector3 totalDeltaPos = platformDeltaPos + rotationDeltaPos;
+        Vector3 totalDeltaPos = platformDeltaPos; //+ rotationDeltaPos;
 
-        if (totalDeltaPos.sqrMagnitude > 0.000001f)
+        if (totalDeltaPos.sqrMagnitude > 0.0000001f)
         {
             characterController.Move(totalDeltaPos);
         }
