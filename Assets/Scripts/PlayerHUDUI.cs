@@ -18,6 +18,9 @@ public class PlayerHUDUI : MonoBehaviour
     [Tooltip("Texto numérico com a vida atual (ex: 10 / 10)")]
     [SerializeField] private Text healthText;
 
+    [Tooltip("Texto numérico com o carvão coletado do jogador")]
+    [SerializeField] private Text coalText;
+
     private void Awake()
     {
         if (playerController == null)
@@ -54,6 +57,11 @@ public class PlayerHUDUI : MonoBehaviour
         if (healthText != null)
         {
             healthText.text = $"{currentHealth} / {maxHealth}";
+        }
+
+        if(coalText != null)
+        {
+            coalText.text = playerController.gameObject.GetComponent<PlayerItems>().coal.ToString();
         }
     }
 }

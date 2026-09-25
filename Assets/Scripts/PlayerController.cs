@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour
     private Transform currentMovingPlatform;
     private Vector3 lastPlatformPosition;
     private Quaternion lastPlatformRotation;
+    private int itemsHeld = 0;
 
     // Propriedades públicas para acesso externo
     public int CurrentHealth => currentHealth;
@@ -239,6 +240,10 @@ public class PlayerController : MonoBehaviour
         PerformInteract();
     }
 
+    /// <summary>
+    /// Callback executado ao pressionar o botão de interaçãoEspecial.
+    /// </summary>
+
     [Header("Tool Settings")]
     [Tooltip("Soquete de transformação onde a ferramenta equipada é anexada (ex: mão/cabeça)")]
     [SerializeField] private Transform toolSocket;
@@ -250,8 +255,8 @@ public class PlayerController : MonoBehaviour
 
     private ToolItem currentEquippedTool;
     public ToolItem CurrentEquippedTool => currentEquippedTool;
-    private CollectableObject currentEquippedItem;
-    public CollectableObject CurrentEquippedItem => currentEquippedItem;
+    //private CollectableObject currentEquippedItem;
+    //public CollectableObject CurrentEquippedItem => currentEquippedItem;
 
     /// <summary>
     /// Função executada ao atacar.
@@ -417,15 +422,18 @@ public class PlayerController : MonoBehaviour
             LocomotiveController locomotive = interactable.GetComponent<LocomotiveController>();
             if (locomotive != null)
             {
-                if(currentEquippedItem != null)
-                {
-                    currentEquippedItem.AddCoal();
-                    Destroy(currentEquippedItem.gameObject);
-                    currentEquippedItem = null;
-                    return;
-                }
+                //if(currentEquippedItem != null)
+                //{
+                //    currentEquippedItem.AddCoal();
+                //    Destroy(currentEquippedItem.gameObject);
+                //    currentEquippedItem = null;
+                //    return;
+                //}
 
-                locomotive.ToggleEngine();
+                if (GetComponent<PlayerItems>().coal <= 0) return;
+                locomotive.Refuel(2);
+                GetComponent<PlayerItems>().AddItem(PlayerItems.ItemType.Coal, -1);
+
                 return;
             }
 
@@ -437,12 +445,12 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            CollectableObject item = interactable.GetComponent<CollectableObject>();
-            if (item != null)
-            {
-                PickupItem(item);
-                return;
-            }
+            //CollectableObject item = interactable.GetComponent<CollectableObject>();
+            //if (item != null)
+            //{
+            //    PickupItem(item);
+            //    return;
+            //}
 
             // TODO: Interagir com outros itens do chão, baús ou caixas.
             Debug.Log($"[PlayerController] Interagiu com {interactable.gameObject.name}: {interactable.GetActionText()}");
@@ -455,17 +463,29 @@ public class PlayerController : MonoBehaviour
     public void PickupItem(CollectableObject item)
     {
         if (item == null) return;
+        itemsHeld += 1;
 
-        if(currentEquippedItem != null)
-        {
-            currentEquippedItem.Drop(item.transform);
-        }
+        GetComponent<PlayerItems>().AddItem(PlayerItems.ItemType.Coal, 1);
 
-        currentEquippedItem = item;
+        Destroy(item.gameObject);
 
-        currentEquippedItem.transform.position = itemSocket.transform.position;
-        currentEquippedItem.transform.SetParent(itemSocket);
-        currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = false;
+
+        //if(currentEquippedItem != null)
+        //{
+        //    //currentEquippedItem.Drop(item.transform);
+        //    //currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = true;
+        //    //GameObject newItemSocket = new GameObject("ItemSocket" + itemsHeld);
+        //    //newItemSocket.transform.position = itemSocket.transform.position;
+        //    //newItemSocket.transform.position += itemSocket.transform.up * 0.20f;
+        //    //newItemSocket.transform.parent = transform;
+        //    //itemSocket = newItemSocket.transform;
+        //}
+
+        //currentEquippedItem = item;
+
+        //currentEquippedItem.transform.position = itemSocket.transform.position;
+        //currentEquippedItem.transform.SetParent(itemSocket);
+        //currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = false;
     }
 
     /// <summary>
@@ -538,6 +558,16 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(groundCheck.position, groundDistance);
+        }
+    }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        CollectableObject obj = collision.gameObject.GetComponent<CollectableObject>();
+        if(obj != null)
+        {
+            PickupItem(obj);
+            Debug.Log("Oie");
         }
     }
 }

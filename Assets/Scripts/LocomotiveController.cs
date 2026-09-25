@@ -41,6 +41,7 @@ public class LocomotiveController : MonoBehaviour
     private bool isSpecialSpeedActive;
     private float specialSpeedMultiplier = 1.0f;
     private float specialSpeedTimer = 0.0f;
+    private bool playerAboard;
 
     // Propriedades públicas para UI e sistemas
     public int CurrentHealth => currentHealth;
@@ -64,7 +65,7 @@ public class LocomotiveController : MonoBehaviour
         {
             interactable = gameObject.AddComponent<InteractableObject>();
         }
-        interactable.SetDynamicActionTextProvider(() => player.CurrentEquippedItem != null ? "Abastecer" : isEngineOn ? "Desligar" : "Ligar");
+        interactable.SetDynamicActionTextProvider(() => "Abastecer"); //player.CurrentEquippedItem != null ? "Abastecer" : !playerAboard ? "Entre!" : isEngineOn ? "Desligar" : "Ligar"
     }
 
     private void Start()
@@ -149,6 +150,7 @@ public class LocomotiveController : MonoBehaviour
     /// </summary>
     public void StartEngine()
     {
+        if (!playerAboard) return;
         if (currentFuel <= 0f)
         {
             Debug.Log("[LocomotiveController] Não é possível ligar: Sem combustível!");
@@ -245,15 +247,29 @@ public class LocomotiveController : MonoBehaviour
             Destroy(other.gameObject);
             StopEngine();
         }
-    }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        GhostEnemy ghost = collision.gameObject.GetComponent<GhostEnemy>();
+        GhostEnemy ghost = other.gameObject.GetComponent<GhostEnemy>();
         if (ghost != null)
         {
             if (!isEngineOn) return;
             OnGhostCollision(ghost.gameObject);
+        }
+
+        PlayerController player = other.gameObject.GetComponent<PlayerController>();
+        if (player != null)
+        {
+            playerAboard = true;
+            ToggleEngine();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        PlayerController player = other.gameObject.GetComponent<PlayerController>();
+        if (player != null)
+        {
+            playerAboard = false;
+            ToggleEngine();
         }
     }
 
