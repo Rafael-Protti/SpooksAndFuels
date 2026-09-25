@@ -466,7 +466,6 @@ public class PlayerController : MonoBehaviour
         currentEquippedItem.transform.position = itemSocket.transform.position;
         currentEquippedItem.transform.SetParent(itemSocket);
         currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = false;
-        currentEquippedItem.transform.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     /// <summary>
@@ -530,7 +529,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("[PlayerController] O jogador foi derrotado!");
         // TODO: Desencadear tela de derrota / Game Over.
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("GameOverLose");
     }
 
     private void OnDrawGizmosSelected()

@@ -148,6 +148,8 @@ public class GhostEnemy : MonoBehaviour
             Debug.Log($"[GhostEnemy] Fantasma Raro causou {attackDamage} de dano à Locomotiva!");
             locomotiveTarget.TakeDamage(attackDamage);
         }
+
+        Recoil();
     }
 
     /// <summary>
@@ -204,6 +206,11 @@ public class GhostEnemy : MonoBehaviour
             Debug.Log($"[GhostEnemy] Stub: Droppou {lootName} na posição {transform.position}");
             Instantiate(drop2, transform.position, Quaternion.identity);
         }
+    }
+
+    public void Recoil()
+    {
+        transform.position += -transform.forward * moveSpeed * Time.deltaTime * 250;
     }
 
     private void OnDrawGizmosSelected()

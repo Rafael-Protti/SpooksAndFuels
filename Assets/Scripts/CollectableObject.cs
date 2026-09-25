@@ -44,11 +44,8 @@ public class CollectableObject : MonoBehaviour
 
     public void Drop(Transform dropLocation)
     {
-        GetComponent<Rigidbody>().isKinematic = false;
         transform.position = dropLocation.position;
         transform.rotation = dropLocation.rotation;
         transform.SetParent(null);
-
-        GetComponent<InteractableObject>().enabled = true;
     }
 }

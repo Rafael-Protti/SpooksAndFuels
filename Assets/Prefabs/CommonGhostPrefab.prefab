@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935552575737726}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:joint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7596935552586977810}
   - component: {fileID: 7596935552586977809}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Ghost_Kid_S1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +138,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935552638500511}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:joint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 7596935552906216110}
   - component: {fileID: 7596935552906216108}
   - component: {fileID: 7596935552906216109}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Axe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 7596935552917021859}
   - component: {fileID: 7596935552917021858}
   - component: {fileID: 7596935552917021868}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Witch_Hat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -351,7 +351,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935553037351809}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: JNTs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -385,7 +385,7 @@ GameObject:
   - component: {fileID: 7596935553926913055}
   - component: {fileID: 7596935553926913053}
   - component: {fileID: 7596935553926913054}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Devil_head1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -473,7 +473,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935553937249744}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:joint5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -509,7 +509,7 @@ GameObject:
   - component: {fileID: 7596935553992811707}
   - component: {fileID: 7596935553992811705}
   - component: {fileID: 7596935553992811706}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Devil_head2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,7 +597,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935554176879145}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Devil_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -630,7 +630,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935554411878303}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:joint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -663,7 +663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7596935554570148609}
   - component: {fileID: 7596935554570148608}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:Ghost_Kid_S2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -759,7 +759,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935554594316219}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LittleGhost_LP (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -793,7 +793,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7596935554599652956}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Kid_ghost_v1:joint4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -829,7 +829,8 @@ GameObject:
   - component: {fileID: 8787712822331262368}
   - component: {fileID: 8438178285779914368}
   - component: {fileID: 5993591337390359056}
-  m_Layer: 0
+  - component: {fileID: -8532672259820794586}
+  m_Layer: 6
   m_Name: CommonGhostPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +876,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -944,9 +945,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GhostEnemy
   ghostType: 0
   maxHealth: 1
-  moveSpeed: 4
+  moveSpeed: 5
   attackDamage: 1
   attackCooldown: 1
   attackRadius: 1.2
   drop1: {fileID: 7827940386853121128, guid: 81eba990e7607a3468defe294fea81a4, type: 3}
   drop2: {fileID: 94275329695375916, guid: 3fe2c5d2e6c35414caedb6dc14178a64, type: 3}
+--- !u!54 &-8532672259820794586
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9167756817475976599}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 0.5, y: 0.5, z: 0.5}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 192
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 116
+  m_CollisionDetection: 0

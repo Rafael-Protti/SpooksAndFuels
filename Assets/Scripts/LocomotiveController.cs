@@ -56,7 +56,7 @@ public class LocomotiveController : MonoBehaviour
         currentHealth = maxHealth;
         currentFuel = maxFuel;
 
-        PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>(); 
+        PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>();
 
         // Configurar o componente InteractableObject para prover o texto dinâmico ("Ligar" / "Desligar")
         InteractableObject interactable = GetComponent<InteractableObject>();
@@ -238,17 +238,22 @@ public class LocomotiveController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        GhostEnemy ghost = other.GetComponent<GhostEnemy>();
-        if (ghost != null)
-        {
-            OnGhostCollision(ghost.gameObject);
-        }
         DestructibleObject destructible = other.GetComponent<DestructibleObject>();
         if (destructible != null)
         {
             TakeDamage(1);
             Destroy(other.gameObject);
             StopEngine();
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        GhostEnemy ghost = collision.gameObject.GetComponent<GhostEnemy>();
+        if (ghost != null)
+        {
+            if (!isEngineOn) return;
+            OnGhostCollision(ghost.gameObject);
         }
     }
 
@@ -272,6 +277,7 @@ public class LocomotiveController : MonoBehaviour
     private void TriggerVictory()
     {
         StopEngine();
+        SceneManager.LoadScene("GameOverWin");
         Debug.Log("[LocomotiveController] VITÓRIA! A locomotiva chegou com sucesso ao destino!");
         // TODO: Tela de vitória.
     }
@@ -282,8 +288,8 @@ public class LocomotiveController : MonoBehaviour
     private void TriggerDefeat()
     {
         StopEngine();
+        SceneManager.LoadScene("GameOverLose");
         Debug.Log("[LocomotiveController] DERROTA! A locomotiva foi destruída!");
-        SceneManager.LoadScene("GameScene");
         // TODO: Tela de derrota.
     }
 
