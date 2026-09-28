@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3730193012385920131}
   - component: {fileID: 8575428010846219037}
   - component: {fileID: 8270270894152818495}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PP_Crate_Wooden_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 7321023891249177030}
   - component: {fileID: 3805371087071507353}
   - component: {fileID: 365003294034810513}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: CratePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}

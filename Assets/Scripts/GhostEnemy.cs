@@ -48,20 +48,11 @@ public class GhostEnemy : MonoBehaviour
 
     public GhostType Type => ghostType;
     public int CurrentHealth => currentHealth;
+    int fortune;
 
     private void Awake()
     {
         // Configuração inicial padrão baseada no tipo
-        if (ghostType == GhostType.Common)
-        {
-            maxHealth = 1;
-            moveSpeed = 4.0f;
-        }
-        else
-        {
-            maxHealth = 2;
-            moveSpeed = 6.0f;
-        }
 
         currentHealth = maxHealth;
     }
@@ -158,8 +149,9 @@ public class GhostEnemy : MonoBehaviour
     /// </summary>
     /// <param name="damageAmount">Quantidade de dano recebida</param>
     /// <param name="isPlayerAttack">Indica se o dano veio de um ataque do jogador</param>
-    public void TakeDamage(int damageAmount, bool isPlayerAttack = false)
+    public void TakeDamage(int damageAmount, int fortune, bool isPlayerAttack = false)
     {
+        Debug.Log("TakeDamage Ghost");
         // Fantasmas Raros imunes a dano que não venha do jogador (ex: atropelamento por locomotiva)
         if (ghostType == GhostType.Rare && !isPlayerAttack)
         {
@@ -172,6 +164,7 @@ public class GhostEnemy : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            this.fortune = fortune;
             Die();
         }
     }
@@ -196,7 +189,8 @@ public class GhostEnemy : MonoBehaviour
         {
             // TODO: Instanciar prefab do item Ectoplasma na posição atual
             Debug.Log($"[GhostEnemy] Stub: Droppou Ectoplasma na posição {transform.position}");
-            Instantiate(drop1, transform.position, Quaternion.identity);
+            Transform instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
+            instanciated.GetComponent<CollectableObject>().itemCount = fortune;
         }
         else
         {
@@ -204,7 +198,8 @@ public class GhostEnemy : MonoBehaviour
             bool isSuperBoost = Random.value <= 0.3f; // 30% de chance de Super Ectoplasma
             string lootName = isSuperBoost ? "Super Ectoplasma (Boost)" : "Ectoplasma";
             Debug.Log($"[GhostEnemy] Stub: Droppou {lootName} na posição {transform.position}");
-            Instantiate(drop2, transform.position, Quaternion.identity);
+            Transform instanciated = Instantiate(drop2, transform.position, Quaternion.identity);
+            instanciated.GetComponent<CollectableObject>().itemCount = fortune;
         }
     }
 

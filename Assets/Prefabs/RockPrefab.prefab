@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1726732807643914684}
   - component: {fileID: 2330979778895539737}
   - component: {fileID: 557807037874903763}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Stone_F
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 7742361461951289737}
   - component: {fileID: 9177469255953084047}
   - component: {fileID: 146669100891510940}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RockPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}

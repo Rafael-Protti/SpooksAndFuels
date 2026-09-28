@@ -113,7 +113,7 @@ public class SetupDestructiblesScript
 
             DestructibleObject destructible = crateRoot.AddComponent<DestructibleObject>();
             SerializedObject so = new SerializedObject(destructible);
-            so.FindProperty("objectType").enumValueIndex = (int)DestructibleType.Crate;
+            so.FindProperty("objectType").enumValueIndex = (int)DestructibleType.Wood;
             so.FindProperty("health").intValue = 3;
             so.ApplyModifiedProperties();
 

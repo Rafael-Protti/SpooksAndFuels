@@ -55,14 +55,19 @@ public class PlayerController : MonoBehaviour
     private Transform currentMovingPlatform;
     private Vector3 lastPlatformPosition;
     private Quaternion lastPlatformRotation;
-    private int itemsHeld = 0;
+    private PlayerAnimation playerAnimation;
 
     // Propriedades públicas para acesso externo
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
+    public ToolHitBox toolHitBox;
+
+    public static PlayerController playerController;
 
     private void Awake()
     {
+        playerController = this;
+
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         currentHealth = maxHealth;
@@ -75,6 +80,8 @@ public class PlayerController : MonoBehaviour
             attackAction = playerInput.actions["Attack"];
             interactAction = playerInput.actions["Interact"];
         }
+
+        playerAnimation = GetComponent<PlayerAnimation>();
     }
 
     private void OnEnable()
@@ -266,97 +273,16 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void PerformAttack()
     {
-        if (currentEquippedTool == null)
+        if (currentEquippedTool == null || playerAnimation.CheckSwing() == true)
         {
             Debug.Log("[PlayerController] Nenhuma ferramenta equipada! Para atacar fantasmas é necessário estar com a Espada equipada.");
             return;
         }
 
         // Executar a animação procedural de swing da ferramenta
-        currentEquippedTool.PlaySwingAnimation();
-
-        switch (currentEquippedTool.Type)
-        {
-            case ToolType.Sword:
-                PerformSwordGhostAttack();
-                break;
-            case ToolType.Pickaxe:
-                UsePickaxe();
-                break;
-            case ToolType.Axe:
-                UseAxe();
-                break;
-        }
+        
+        currentEquippedTool.StartAnimation(playerAnimation);
     }
-
-    /// <summary>
-    /// Executa o ataque de Espada atingindo os fantasmas no raio de alcance.
-    /// </summary>
-    private void PerformSwordGhostAttack()
-    {
-        Debug.Log("[PlayerController] Golpes com a Espada acionados contra os fantasmas!");
-
-        Vector3 attackCenter = transform.position + transform.forward * 1.0f;
-        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
-        foreach (var col in hitColliders)
-        {
-            GhostEnemy ghost = col.GetComponentInParent<GhostEnemy>();
-            if (ghost != null)
-            {
-                Debug.Log($"[PlayerController] Espada atingiu fantasma: {ghost.name}");
-                ghost.TakeDamage(1, true); // true = Ataque direto do jogador
-            }
-        }
-    }
-
-    /// <summary>
-    /// Função executada ao utilizar a Picareta.
-    /// Detecta pedras destrutíveis no raio de alcance e aplica o golpe.
-    /// </summary>
-    public void UsePickaxe()
-    {
-        bool hitSomething = false;
-        Vector3 attackCenter = transform.position + transform.forward * 1.0f;
-        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
-        foreach (var col in hitColliders)
-        {
-            DestructibleObject obj = col.GetComponentInParent<DestructibleObject>();
-            if (obj != null && obj.ObjectType == DestructibleType.Rock)
-            {
-                obj.TryHit(ToolType.Pickaxe);
-                hitSomething = true;
-            }
-        }
-        if (!hitSomething)
-        {
-            Debug.Log("[PlayerController] Picareta: Nenhuma pedra no alcance.");
-        }
-    }
-
-    /// <summary>
-    /// Função executada ao utilizar o Machado.
-    /// Detecta caixas destrutíveis no raio de alcance e aplica o golpe.
-    /// </summary>
-    public void UseAxe()
-    {
-        bool hitSomething = false;
-        Vector3 attackCenter = transform.position + transform.forward * 1.0f;
-        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRange);
-        foreach (var col in hitColliders)
-        {
-            DestructibleObject obj = col.GetComponentInParent<DestructibleObject>();
-            if (obj != null && obj.ObjectType == DestructibleType.Crate)
-            {
-                obj.TryHit(ToolType.Axe);
-                hitSomething = true;
-            }
-        }
-        if (!hitSomething)
-        {
-            Debug.Log("[PlayerController] Machado: Nenhuma caixa no alcance.");
-        }
-    }
-
     private InteractableObject currentNearestInteractable;
 
     /// <summary>
@@ -463,29 +389,10 @@ public class PlayerController : MonoBehaviour
     public void PickupItem(CollectableObject item)
     {
         if (item == null) return;
-        itemsHeld += 1;
 
-        GetComponent<PlayerItems>().AddItem(PlayerItems.ItemType.Coal, 1);
+        GetComponent<PlayerItems>().AddItem(PlayerItems.ItemType.Coal, item.itemCount);
 
         Destroy(item.gameObject);
-
-
-        //if(currentEquippedItem != null)
-        //{
-        //    //currentEquippedItem.Drop(item.transform);
-        //    //currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = true;
-        //    //GameObject newItemSocket = new GameObject("ItemSocket" + itemsHeld);
-        //    //newItemSocket.transform.position = itemSocket.transform.position;
-        //    //newItemSocket.transform.position += itemSocket.transform.up * 0.20f;
-        //    //newItemSocket.transform.parent = transform;
-        //    //itemSocket = newItemSocket.transform;
-        //}
-
-        //currentEquippedItem = item;
-
-        //currentEquippedItem.transform.position = itemSocket.transform.position;
-        //currentEquippedItem.transform.SetParent(itemSocket);
-        //currentEquippedItem.transform.GetComponent<InteractableObject>().enabled = false;
     }
 
     /// <summary>
@@ -495,13 +402,6 @@ public class PlayerController : MonoBehaviour
     public void EquipTool(ToolItem toolToEquip)
     {
         if (toolToEquip == null) return;
-
-        // Se já tiver uma ferramenta equipada, soltá-la no chão primeiro
-        if (currentEquippedTool != null)
-        {
-            Vector3 dropPos = transform.position + transform.forward * 0.8f + Vector3.up * 0.2f;
-            currentEquippedTool.Drop(dropPos);
-        }
 
         currentEquippedTool = toolToEquip;
 

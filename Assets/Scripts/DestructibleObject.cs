@@ -3,12 +3,12 @@ using UnityEngine;
 /// <summary>
 /// Tipo de objeto destrutível no cenário.
 /// Rock (Pedra): Destruída com a Picareta. Bloqueia os trilhos e causa dano à locomotiva se colidir.
-/// Crate (Caixa): Destruída com o Machado. Espalhada pelo cenário e solta madeira como loot.
+/// Wood (Caixa): Destruída com o Machado. Espalhada pelo cenário e solta madeira como loot.
 /// </summary>
 public enum DestructibleType
 {
     Rock,
-    Crate
+    Wood
 }
 
 /// <summary>
@@ -20,7 +20,7 @@ public class DestructibleObject : MonoBehaviour
 {
     [Header("Destructible Properties")]
     [Tooltip("Tipo do objeto destrutível (Pedra ou Caixa)")]
-    [SerializeField] private DestructibleType objectType = DestructibleType.Crate;
+    [SerializeField] private DestructibleType objectType = DestructibleType.Wood;
 
     [Tooltip("Quantidade de golpes necessários para destruir o objeto")]
     [SerializeField] private int health = 3;
@@ -42,6 +42,7 @@ public class DestructibleObject : MonoBehaviour
 
     public DestructibleType ObjectType => objectType;
     public int CurrentHealth => currentHealth;
+    int fortune = 1;
 
     private void Awake()
     {
@@ -55,13 +56,15 @@ public class DestructibleObject : MonoBehaviour
     /// Pedra: somente Picareta.
     /// Caixa: somente Machado.
     /// </summary>
-    public void TryHit(ToolType usedTool)
+    public void TryHit(ToolType usedTool, int fortune)
     {
         if (isBeingDestroyed) return;
 
         // Verificar se a ferramenta é a correta para este objeto
         bool isCorrectTool = (objectType == DestructibleType.Rock && usedTool == ToolType.Pickaxe)
-                          || (objectType == DestructibleType.Crate && usedTool == ToolType.Axe);
+                          || (objectType == DestructibleType.Wood && usedTool == ToolType.Axe);
+
+        this.fortune = fortune;
 
         if (!isCorrectTool)
         {
@@ -109,10 +112,11 @@ public class DestructibleObject : MonoBehaviour
                 // TODO: Instanciar prefab do item Pedrinha na posição do objeto.
                 Debug.Log($"[DestructibleObject] Stub: Droppou Pedrinha(s) em {transform.position}");
                 break;
-            case DestructibleType.Crate:
+            case DestructibleType.Wood:
                 // TODO: Instanciar prefab do item Madeira na posição do objeto.
                 Debug.Log($"[DestructibleObject] Stub: Droppou Madeira em {transform.position}");
-                Instantiate(drop1, transform.position, Quaternion.identity);
+                GameObject instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
+                instanciated.GetComponent<CollectableObject>().itemCount = fortune;
                 break;
         }
     }

@@ -944,7 +944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GhostEnemy
   ghostType: 0
-  maxHealth: 1
+  maxHealth: 2
   moveSpeed: 5
   attackDamage: 1
   attackCooldown: 1

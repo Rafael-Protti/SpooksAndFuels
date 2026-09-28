@@ -227,13 +227,13 @@ public class LocomotiveController : MonoBehaviour
             if (ghostEnemy.Type == GhostType.Common)
             {
                 Debug.Log($"[LocomotiveController] Fantasma Comum atropelado pela locomotiva: {ghost.name}");
-                ghostEnemy.TakeDamage(ghostEnemy.CurrentHealth, false); // Morre ao colidir
+                ghostEnemy.TakeDamage(ghostEnemy.CurrentHealth, 1, false); // Morre ao colidir
             }
             else
             {
                 Debug.Log($"[LocomotiveController] Fantasma Raro colidiu com a locomotiva!");
                 TakeDamage(1); // Causa 1 de dano na locomotiva
-                ghostEnemy.TakeDamage(0, false); // Imune à colisão
+                ghostEnemy.TakeDamage(0, 1, false); // Imune à colisão
             }
         }
     }

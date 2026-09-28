@@ -27,25 +27,20 @@ public class ToolItem : MonoBehaviour
     [Tooltip("Nome de exibição da ferramenta")]
     [SerializeField] private string toolName = "Espada";
 
-    [Header("Equipped Offset")]
-    [Tooltip("Posição local relativa ao soquete do jogador quando equipada")]
-    [SerializeField] private Vector3 equippedLocalPosition = new Vector3(0.4f, 0.8f, 0.4f);
-
-    [Tooltip("Rotação local relativa ao soquete do jogador quando equipada")]
-    [SerializeField] private Vector3 equippedLocalRotation = new Vector3(0f, 0f, 0f);
-
     [Tooltip("Posição da ferramenta no vagão")]
     [SerializeField] private Transform vagonLocation;
 
     private bool isEquipped;
     private Collider toolCollider;
     private InteractableObject interactable;
-    private Coroutine swingCoroutine;
     private Quaternion originalLocalRotation;
 
     public ToolType Type => toolType;
     public string ToolName => toolName;
     public bool IsEquipped => isEquipped;
+    public int damage = 1;
+    public int swingSpeed = 1;
+    public int dropFortune = 1;
 
     private void Awake()
     {
@@ -89,71 +84,41 @@ public class ToolItem : MonoBehaviour
         Debug.Log($"[ToolItem] {toolName} equipada com sucesso no jogador.");
     }
 
-    /// <summary>
-    /// Solta a ferramenta no chão na posição informada.
-    /// </summary>
-    public void Drop(Vector3 dropPosition)
+    public void StartAnimation(PlayerAnimation playerAnimation)
     {
-        StopAllCoroutines();
-        isEquipped = false;
-        transform.SetParent(null);
-        // transform.position = dropPosition;
-        // transform.rotation = Quaternion.identity;
-
-        transform.position = vagonLocation.position;
-        transform.rotation = Quaternion.Euler(Vector3.zero);
-        transform.SetParent(vagonLocation);
-
-        if (toolCollider != null) toolCollider.enabled = true;
-        if (interactable != null) interactable.enabled = true;
-
-        // Debug.Log($"[ToolItem] {toolName} solta no chão na posição {dropPosition}.");
-
+        playerAnimation.ChangeSwing(true, swingSpeed);
+        PlayerController.playerController.toolHitBox.ToggleBoxCollider(true);
     }
 
-    /// <summary>
-    /// Executa uma animação procedural de swing (golpe de ataque).
-    /// </summary>
-    public void PlaySwingAnimation()
+    public void OnCollisionDetected(Collider other)
     {
-        if (swingCoroutine != null)
+        switch (toolType)
         {
-            StopCoroutine(swingCoroutine);
+            case ToolType.Sword:
+                Attack(other);
+                break;
+            case ToolType.Pickaxe:
+                Break(other);
+                break;
+            case ToolType.Axe:
+                Break(other);
+                break;
         }
-        swingCoroutine = StartCoroutine(SwingRoutine());
     }
 
-    /// <summary>
-    /// Corrotina que rotaciona a ferramenta para frente e volta rapidamente simulando um golpe.
-    /// </summary>
-    private IEnumerator SwingRoutine()
+    void Attack(Collider target)
     {
-        float duration = 0.22f;
-        float elapsed = 0f;
+        GhostEnemy ghost = target.gameObject.transform.GetComponent<GhostEnemy>();
+        if (ghost == null) return;
+        ghost.TakeDamage(damage, dropFortune, true);
+        PlayerController.playerController.toolHitBox.ToggleBoxCollider(false);
+    }
 
-        Quaternion startRot = originalLocalRotation;
-        Quaternion swingRot = startRot * Quaternion.Euler(65f, 0f, 0f); // Inclina 65 graus para frente
-
-        // Fase de ida do golpe
-        while (elapsed < duration * 0.5f)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / (duration * 0.5f);
-            transform.localRotation = Quaternion.Slerp(startRot, swingRot, t);
-            yield return null;
-        }
-
-        // Fase de volta do golpe
-        elapsed = 0f;
-        while (elapsed < duration * 0.5f)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / (duration * 0.5f);
-            transform.localRotation = Quaternion.Slerp(swingRot, startRot, t);
-            yield return null;
-        }
-
-        transform.localRotation = startRot;
-        swingCoroutine = null;
+    void Break(Collider target)
+    {
+        DestructibleObject obj = target.gameObject.transform.GetComponent<DestructibleObject>();
+        if (obj == null) return;
+        obj.TryHit(toolType, dropFortune);
+        PlayerController.playerController.toolHitBox.ToggleBoxCollider(false);
     }
 }

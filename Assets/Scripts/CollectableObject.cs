@@ -8,6 +8,7 @@ public class CollectableObject : MonoBehaviour
         Ectoplasm,
         SuperEctoplasm
     }
+    public int itemCount = 1;
 
     [SerializeField] private ItemType itemType = ItemType.Coal;
 
