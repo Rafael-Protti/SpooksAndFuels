@@ -2,46 +2,10 @@ using UnityEngine;
 
 public class CollectableObject : MonoBehaviour
 {
-    public enum ItemType
-    {
-        Coal,
-        Ectoplasm,
-        SuperEctoplasm
-    }
     public int itemCount = 1;
 
-    [SerializeField] private ItemType itemType = ItemType.Coal;
-
-    private LocomotiveController locomotive;
-
-    public void Start()
-    {
-        locomotive = GameObject.Find("Locomotive").GetComponent<LocomotiveController>();
-    }
-
-    public void AddCoal()
-    {
-        int amount = 0;
-        if(itemType == ItemType.Coal){
-            amount = 10;
-        }
-
-        if(itemType == ItemType.Ectoplasm){
-            amount = 2;
-        }
-
-        if(itemType == ItemType.SuperEctoplasm){
-            amount = 4;
-            AddSpeedBoost();
-        }
-
-        locomotive.Refuel(amount);
-    }
-
-    public void AddSpeedBoost()
-    {
-        locomotive.ApplySpeedBoost(1.50f, 30f);
-    }
+    [SerializeField] private PlayerItems.ItemType itemType = PlayerItems.ItemType.Wood;
+    public PlayerItems.ItemType ItemType => itemType;
 
     public void Drop(Transform dropLocation)
     {

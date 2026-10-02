@@ -58,8 +58,12 @@ public class ToolItem : MonoBehaviour
 
     private void Start()
     {
-        transform.position = vagonLocation.position;
-        transform.SetParent(vagonLocation);
+        // Posiciona no vagão apenas se a referência estiver configurada
+        if (vagonLocation != null)
+        {
+            transform.position = vagonLocation.position;
+            transform.SetParent(vagonLocation);
+        }
     }
 
     /// <summary>

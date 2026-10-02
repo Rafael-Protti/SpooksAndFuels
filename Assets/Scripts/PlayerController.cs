@@ -236,7 +236,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void OnAttackPerformed(InputAction.CallbackContext context)
     {
-        PerformAttack();
+        GetComponent<PlayerItems>().UseSelectedItem();
     }
 
     /// <summary>
@@ -355,11 +355,17 @@ public class PlayerController : MonoBehaviour
                 //    currentEquippedItem = null;
                 //    return;
                 //}
-
-                if (GetComponent<PlayerItems>().coal <= 0) return;
-                locomotive.Refuel(2);
-                GetComponent<PlayerItems>().AddItem(PlayerItems.ItemType.Coal, -1);
-
+                var playerItems = GetComponent<PlayerItems>();
+                if (playerItems.GetItemCount(PlayerItems.ItemType.Wood) > 0)
+                {
+                    locomotive.Refuel(10);
+                    playerItems.AddItem(PlayerItems.ItemType.Wood, -1);
+                }
+                else if (playerItems.GetItemCount(PlayerItems.ItemType.Ectoplasm) > 0)
+                {
+                    locomotive.Refuel(2);
+                    playerItems.AddItem(PlayerItems.ItemType.Ectoplasm, -1);
+                }
                 return;
             }
 
@@ -367,16 +373,17 @@ public class PlayerController : MonoBehaviour
             ToolItem tool = interactable.GetComponent<ToolItem>();
             if (tool != null)
             {
-                EquipTool(tool);
+                GetComponent<PlayerItems>().AddTool(tool);
                 return;
             }
 
-            //CollectableObject item = interactable.GetComponent<CollectableObject>();
-            //if (item != null)
-            //{
-            //    PickupItem(item);
-            //    return;
-            //}
+            // 3. Interação com itens coletáveis
+            CollectableObject item = interactable.GetComponent<CollectableObject>();
+            if (item != null)
+            {
+                PickupItem(item);
+                return;
+            }
 
             // TODO: Interagir com outros itens do chão, baús ou caixas.
             Debug.Log($"[PlayerController] Interagiu com {interactable.gameObject.name}: {interactable.GetActionText()}");
@@ -390,10 +397,10 @@ public class PlayerController : MonoBehaviour
     {
         if (item == null) return;
 
-        GetComponent<PlayerItems>().AddItem(PlayerItems.ItemType.Coal, item.itemCount);
-
+        GetComponent<PlayerItems>().AddItem(item.ItemType, item.itemCount);
         Destroy(item.gameObject);
     }
+
 
     /// <summary>
     /// Equipa a ferramenta informada no soquete do jogador.
@@ -401,7 +408,11 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void EquipTool(ToolItem toolToEquip)
     {
-        if (toolToEquip == null) return;
+        if (toolToEquip == null)
+        {
+            currentEquippedTool = null;
+            return;
+        }
 
         currentEquippedTool = toolToEquip;
 
