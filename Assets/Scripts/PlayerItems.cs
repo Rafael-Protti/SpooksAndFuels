@@ -78,6 +78,12 @@ public class PlayerItems : MonoBehaviour
 
     private void HandleInput()
     {
+        if (Mouse.current != null)
+        {
+            float scroll = Mouse.current.scroll.ReadValue().y;
+            if (scroll > 0) ChangeSelectedSlot(-1);
+            else if (scroll < 0) ChangeSelectedSlot(1);
+        }
 
         // Teclas numéricas 1-8
         if (Keyboard.current != null)

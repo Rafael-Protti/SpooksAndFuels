@@ -275,10 +275,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform toolSocket;
     [SerializeField] private Transform itemSocket;
 
-    [Header("Attack Settings")]
-    [Tooltip("Raio de alcance do ataque do jogador")]
-    [SerializeField] private float attackRange = 2.5f;
-
     private ToolItem currentEquippedTool;
     public ToolItem CurrentEquippedTool => currentEquippedTool;
     //private CollectableObject currentEquippedItem;
