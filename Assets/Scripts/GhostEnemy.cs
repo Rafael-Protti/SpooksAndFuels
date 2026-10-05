@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -38,6 +39,9 @@ public class GhostEnemy : MonoBehaviour
 
     public Transform drop1;
     public Transform drop2;
+    public float recoilForce = 5;
+    public float recoilDuration = 5;
+    bool inRecoil = false;
 
     // Estado interno
     private int currentHealth;
@@ -45,6 +49,7 @@ public class GhostEnemy : MonoBehaviour
     private Transform targetTransform;
     private PlayerController playerTarget;
     private LocomotiveController locomotiveTarget;
+    private Animator animator;
 
     public GhostType Type => ghostType;
     public int CurrentHealth => currentHealth;
@@ -60,6 +65,7 @@ public class GhostEnemy : MonoBehaviour
     private void Start()
     {
         FindTarget();
+        animator = transform.GetChild(0).GetComponent<Animator>();
     }
 
     private void Update()
@@ -160,6 +166,7 @@ public class GhostEnemy : MonoBehaviour
         }
 
         currentHealth -= damageAmount;
+        animator.SetBool("takeHit", true);
         Debug.Log($"[GhostEnemy] {ghostType} recebeu {damageAmount} de dano. Vida restante: {currentHealth}/{maxHealth}");
 
         if (currentHealth <= 0)
@@ -174,9 +181,21 @@ public class GhostEnemy : MonoBehaviour
     /// </summary>
     public void Die()
     {
-        DropLoot();
+        animator.SetBool("isDying", true);
+        attackDamage = 0;
+        attackRadius = 0;
+        moveSpeed = 0;
         Debug.Log($"[GhostEnemy] {ghostType} foi derrotado!");
-        Destroy(gameObject);
+    }
+
+
+    /// <summary>
+    /// O que acontece ao fantasma morrer.
+    /// </summary>
+    public void OnDefeat()
+    {
+        DropLoot();
+        Destroy(transform.gameObject);
     }
 
     /// <summary>
@@ -205,7 +224,44 @@ public class GhostEnemy : MonoBehaviour
 
     public void Recoil()
     {
-        transform.position += -transform.forward * moveSpeed * Time.deltaTime * 250;
+        if (!inRecoil && targetTransform != null)
+        {
+            StartCoroutine(RotinaRecuo(targetTransform.transform.position));
+        }
+    }
+
+    private IEnumerator RotinaRecuo(Vector3 posicaoAlvo)
+    {
+        inRecoil = true;
+
+        // Calcula a direção oposta ao alvo
+        Vector3 direcaoOposta = (transform.position - posicaoAlvo).normalized;
+
+        // Posição atual e posição de destino do recuo
+        Vector3 posicaoInicial = transform.position;
+        Vector3 posicaoRecuada = posicaoInicial + (direcaoOposta * recoilForce);
+
+        float tempoDecorrido = 0f;
+
+        // Fase 1: O recuo rápido para trás
+        while (tempoDecorrido < recoilDuration)
+        {
+            tempoDecorrido += Time.deltaTime;
+            float progresso = tempoDecorrido / recoilDuration;
+
+            posicaoRecuada = new Vector3(posicaoRecuada.x, transform.position.y, posicaoRecuada.z);
+
+            // Usa Mathf.SmoothStep para um movimento fluido, mas rápido
+            transform.position = Vector3.Lerp(posicaoInicial, posicaoRecuada, Mathf.SmoothStep(0f, 1f, progresso));
+
+            yield return null;
+        }
+
+        // Garante que a posição final do recuo foi atingida
+        transform.position = posicaoRecuada;
+
+        // Libera para o seu código normal de perseguição voltar a assumir o controle total do transform
+        inRecoil = false;
     }
 
     private void OnDrawGizmosSelected()

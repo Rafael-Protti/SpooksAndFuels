@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
@@ -30,6 +31,12 @@ public class PlayerHUDUI : MonoBehaviour
     [Header("Inventory UI")]
     [Tooltip("Slots de inventário na interface — preenchidos automaticamente via AutoConnect")]
     [SerializeField] private List<InventorySlotUI> inventorySlots = new List<InventorySlotUI>();
+    [Tooltip("Textos que exibem o ícones dos botões ('Q e E' ou 'R1 ou L1')")]
+    [SerializeField] private Text buttonTextNext;
+    [SerializeField] private Text buttonTextPrevious;
+    [Header("Player Input Reference")]
+    [Tooltip("Referência ao PlayerInput para detectar mudança de esquema de controle")]
+    [SerializeField] private PlayerInput playerInput;
 
     // Nomes dos slots na hierarquia do Canvas (mesma ordem do inventário em PlayerItems)
     private static readonly string[] SlotObjectNames = {
@@ -55,6 +62,9 @@ public class PlayerHUDUI : MonoBehaviour
             if (playerController == null) return;
         }
 
+        playerInput = playerController.transform.gameObject.GetComponent<PlayerInput>();
+
+        UpdateNextAndPreviousIcons();
         UpdateHealthUI();
         UpdateInventoryUI();
     }
@@ -155,6 +165,49 @@ public class PlayerHUDUI : MonoBehaviour
                         ? new Color(0.6f, 0.9f, 0.6f, 1f)
                         : new Color(0.3f, 0.4f, 0.3f, 0.5f);
             }
+        }
+    }
+
+    /// <summary>
+    /// Atualiza o texto do botão ("E" ou "Y") e a descrição da ação.
+    /// </summary>
+    private void UpdateNextAndPreviousIcons()
+    {
+
+        // Determinar letra do botão conforme controle ativo
+        string buttonDisplayNext = GetButtonForCurrentControl(true);
+        if (buttonTextNext != null)
+        {
+            buttonTextNext.text = buttonDisplayNext;
+        }
+        string buttonDisplayPrevious = GetButtonForCurrentControl(false);
+        if (buttonTextPrevious != null)
+        {
+            buttonTextPrevious.text = buttonDisplayPrevious;
+        }
+    }
+
+    /// <summary>
+    /// Retorna "Y" se estiver usando Gamepad/Controle, ou "E" para Teclado/Mouse.
+    /// </summary>
+    private string GetButtonForCurrentControl(bool next)
+    {
+        if (next)
+        {
+            if (playerInput != null && playerInput.currentControlScheme == "Gamepad")
+            {
+                return "R1";
+            }
+            return "E";
+        }
+
+        else 
+        {
+            if (playerInput != null && playerInput.currentControlScheme == "Gamepad")
+            {
+                return "L1";
+            }
+            return "Q";
         }
     }
 }

@@ -3,14 +3,7 @@ using UnityEngine;
 public class PlayerAnimation : MonoBehaviour
 {
     public Animator animator;
-    public Transform toolSocket;
     float swingSpeed;
-
-    private void Start()
-    {
-        if (toolSocket == null) return;
-        animator = toolSocket.GetComponent<Animator>();
-    }
 
     public void ChangeSwing(bool value, float multiplier)
     {

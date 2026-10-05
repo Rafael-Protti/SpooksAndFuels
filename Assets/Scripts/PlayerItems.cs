@@ -33,19 +33,11 @@ public class PlayerItems : MonoBehaviour
 
     [Tooltip("Socket onde itens selecionados são exibidos na mão do jogador")]
     [SerializeField] private Transform itemSocket;
+    [Tooltip("Lista de itens coletáveis para serem instanciados")]
+    [SerializeField] private List<Transform> pickupItems = new();
 
     // Representa visual do item corrente (cubo colorido)
-    private GameObject currentItemVisual;
-
-    // Cores por tipo de item para o visual no itemSocket
-    private static readonly Dictionary<ItemType, Color> ItemColors = new Dictionary<ItemType, Color>
-    {
-        { ItemType.Wood,          new Color(0.55f, 0.27f, 0.07f) },
-        { ItemType.Stone,         new Color(0.55f, 0.55f, 0.55f) },
-        { ItemType.Iron,          new Color(0.72f, 0.72f, 0.80f) },
-        { ItemType.Ectoplasm,     new Color(0.30f, 0.80f, 0.30f) },
-        { ItemType.SuperEctoplasm,new Color(0.10f, 0.90f, 0.90f) },
-    };
+    private Transform currentItemVisual;
 
     private PlayerController playerController;
 
@@ -86,13 +78,6 @@ public class PlayerItems : MonoBehaviour
 
     private void HandleInput()
     {
-        // Scroll do mouse para trocar slot
-        if (Mouse.current != null)
-        {
-            float scroll = Mouse.current.scroll.ReadValue().y;
-            if (scroll > 0)  ChangeSelectedSlot(-1);
-            else if (scroll < 0) ChangeSelectedSlot(1);
-        }
 
         // Teclas numéricas 1-8
         if (Keyboard.current != null)
@@ -161,23 +146,24 @@ public class PlayerItems : MonoBehaviour
     {
         if (itemSocket == null) return;
 
-        currentItemVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        currentItemVisual.name = "ItemVisual_" + type.ToString();
-        currentItemVisual.transform.SetParent(itemSocket, false);
-        currentItemVisual.transform.localPosition = Vector3.zero;
-        currentItemVisual.transform.localRotation = Quaternion.identity;
-        currentItemVisual.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        switch (type)
+        {
+            case ItemType.Wood: currentItemVisual = pickupItems[0];
+                break;
+            case ItemType.Stone: currentItemVisual = pickupItems[1];
+                break;
+            case ItemType.Iron: currentItemVisual = pickupItems[2];
+                break;
+            case ItemType.Ectoplasm: currentItemVisual = pickupItems[3];
+                break;
+            case ItemType.SuperEctoplasm: currentItemVisual = pickupItems[4];
+                break;
+        }
 
-        // Remove collider para não interferir no jogo
-        var col = currentItemVisual.GetComponent<Collider>();
-        if (col != null) Object.Destroy(col);
-
-        // Aplica cor por tipo
-        Color color = Color.white;
-        if (ItemColors.ContainsKey(type)) color = ItemColors[type];
-        var renderer = currentItemVisual.GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.material.color = color;
+        Transform instanciated = Instantiate(currentItemVisual);
+        instanciated.position = itemSocket.position;
+        instanciated.rotation = itemSocket.rotation;
+        instanciated.transform.SetParent(itemSocket);
     }
 
     /// <summary>
@@ -187,9 +173,10 @@ public class PlayerItems : MonoBehaviour
     {
         if (currentItemVisual != null)
         {
-            Object.Destroy(currentItemVisual);
-            currentItemVisual = null;
+            Destroy(itemSocket.transform.GetChild(0).gameObject);
         }
+
+        currentItemVisual = null;
     }
 
     public void AddTool(ToolItem tool)

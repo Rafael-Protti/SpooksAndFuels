@@ -41,6 +41,7 @@ public class ToolItem : MonoBehaviour
     public int damage = 1;
     public int swingSpeed = 1;
     public int dropFortune = 1;
+    public bool inInventory = false;
 
     private void Awake()
     {
@@ -72,6 +73,7 @@ public class ToolItem : MonoBehaviour
     public void Equip(Transform socket)
     {
         isEquipped = true;
+        if (inInventory) return;
 
         transform.position = socket.transform.position;
         originalLocalRotation = transform.rotation;
@@ -81,17 +83,12 @@ public class ToolItem : MonoBehaviour
             transform.SetParent(socket);
         }
 
-        transform.localRotation = originalLocalRotation;
+        transform.rotation = originalLocalRotation;
         if (toolCollider != null) toolCollider.enabled = false;
         if (interactable != null) interactable.enabled = false;
 
         Debug.Log($"[ToolItem] {toolName} equipada com sucesso no jogador.");
-    }
-
-    public void StartAnimation(PlayerAnimation playerAnimation)
-    {
-        playerAnimation.ChangeSwing(true, swingSpeed);
-        PlayerController.playerController.toolHitBox.ToggleBoxCollider(true);
+        inInventory = true;
     }
 
     public void OnCollisionDetected(Collider other)

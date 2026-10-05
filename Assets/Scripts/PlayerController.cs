@@ -46,6 +46,8 @@ public class PlayerController : MonoBehaviour
     private InputAction jumpAction;
     private InputAction attackAction;
     private InputAction interactAction;
+    private InputAction nextAction;
+    private InputAction previousAction;
 
     // Variáveis de estado
     private Vector2 rawInputVector;
@@ -61,7 +63,7 @@ public class PlayerController : MonoBehaviour
     public int CurrentHealth => currentHealth;
     public int MaxHealth => maxHealth;
     public ToolHitBox toolHitBox;
-
+    public PlayerItems playerItems;
     public static PlayerController playerController;
 
     private void Awake()
@@ -79,9 +81,12 @@ public class PlayerController : MonoBehaviour
             jumpAction = playerInput.actions["Jump"];
             attackAction = playerInput.actions["Attack"];
             interactAction = playerInput.actions["Interact"];
+            nextAction = playerInput.actions["Next"];
+            previousAction = playerInput.actions["Previous"];
         }
 
         playerAnimation = GetComponent<PlayerAnimation>();
+        playerItems = GetComponent<PlayerItems>();
     }
 
     private void OnEnable()
@@ -89,6 +94,8 @@ public class PlayerController : MonoBehaviour
         if (jumpAction != null) jumpAction.performed += OnJumpPerformed;
         if (attackAction != null) attackAction.performed += OnAttackPerformed;
         if (interactAction != null) interactAction.performed += OnInteractPerformed;
+        if (nextAction != null) nextAction.performed += OnNextPerformed;
+        if (previousAction != null) previousAction.performed += OnPreviousPerformed;
     }
 
     private void OnDisable()
@@ -96,6 +103,8 @@ public class PlayerController : MonoBehaviour
         if (jumpAction != null) jumpAction.performed -= OnJumpPerformed;
         if (attackAction != null) attackAction.performed -= OnAttackPerformed;
         if (interactAction != null) interactAction.performed -= OnInteractPerformed;
+        if (nextAction != null) nextAction.performed -= OnNextPerformed;
+        if (previousAction != null) previousAction.performed -= OnPreviousPerformed;
     }
 
     private void Update()
@@ -220,6 +229,16 @@ public class PlayerController : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    private void OnNextPerformed(InputAction.CallbackContext context)
+    {
+        playerItems.ChangeSelectedSlot(1);
+    }
+
+    private void OnPreviousPerformed(InputAction.CallbackContext context)
+    {
+        playerItems.ChangeSelectedSlot(-1);
+    }
+
     /// <summary>
     /// Callback executado ao pressionar a ação de pulo.
     /// </summary>
@@ -280,8 +299,9 @@ public class PlayerController : MonoBehaviour
         }
 
         // Executar a animação procedural de swing da ferramenta
-        
-        currentEquippedTool.StartAnimation(playerAnimation);
+
+        playerAnimation.ChangeSwing(true, 1.25f);
+        toolHitBox.ToggleBoxCollider(true);
     }
     private InteractableObject currentNearestInteractable;
 

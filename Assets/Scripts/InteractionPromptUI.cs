@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 public class InteractionPromptUI : MonoBehaviour
 {
     [Header("UI References")]
-    [Tooltip("Texto que exibe o ícone do botão ('E' ou 'Y')")]
+    [Tooltip("Texto que exibe o ícone do botão ('R' ou 'Y')")]
     [SerializeField] private Text buttonText;
 
     [Tooltip("Texto posicionado abaixo do ícone que descreve a ação (ex: 'Ligar', 'Desligar')")]
@@ -134,6 +134,6 @@ public class InteractionPromptUI : MonoBehaviour
         {
             return "Y";
         }
-        return "E";
+        return "R";
     }
 }
