@@ -21,12 +21,12 @@ public class PlayerHUDUI : MonoBehaviour
     [Tooltip("Referência ao controlador do jogador")]
     [SerializeField] private PlayerController playerController;
 
-    [Header("UI Components")]
-    [Tooltip("Barra de preenchimento da saúde do jogador")]
-    [SerializeField] private Image healthFillBar;
+    //[Header("UI Components")]
+    //[Tooltip("Barra de preenchimento da saúde do jogador")]
+    //[SerializeField] private Image healthFillBar;
 
-    [Tooltip("Texto numérico com a vida atual")]
-    [SerializeField] private Text healthText;
+    //[Tooltip("Texto numérico com a vida atual")]
+    //[SerializeField] private Text healthText;
 
     [Header("Inventory UI")]
     [Tooltip("Slots de inventário na interface — preenchidos automaticamente via AutoConnect")]
@@ -65,7 +65,7 @@ public class PlayerHUDUI : MonoBehaviour
         playerInput = playerController.transform.gameObject.GetComponent<PlayerInput>();
 
         UpdateNextAndPreviousIcons();
-        UpdateHealthUI();
+        //UpdateHealthUI();
         UpdateInventoryUI();
     }
 
@@ -108,20 +108,20 @@ public class PlayerHUDUI : MonoBehaviour
     /// <summary>
     /// Atualiza os elementos visuais de vida do jogador.
     /// </summary>
-    private void UpdateHealthUI()
-    {
-        int currentHealth = playerController.CurrentHealth;
-        int maxHealth     = playerController.MaxHealth;
+    //private void UpdateHealthUI()
+    //{
+    //    int currentHealth = playerController.CurrentHealth;
+    //    int maxHealth     = playerController.MaxHealth;
 
-        if (healthFillBar != null && maxHealth > 0)
-        {
-            float fillRatio = (float)currentHealth / maxHealth;
-            healthFillBar.fillAmount = Mathf.Clamp01(fillRatio);
-        }
+    //    if (healthFillBar != null && maxHealth > 0)
+    //    {
+    //        float fillRatio = (float)currentHealth / maxHealth;
+    //        healthFillBar.fillAmount = Mathf.Clamp01(fillRatio);
+    //    }
 
-        if (healthText != null)
-            healthText.text = $"{currentHealth} / {maxHealth}";
-    }
+    //    if (healthText != null)
+    //        healthText.text = $"{currentHealth} / {maxHealth}";
+    //}
 
     /// <summary>
     /// Atualiza todos os slots visuais do inventário refletindo o estado de PlayerItems.

@@ -10,9 +10,9 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Health Settings")]
-    [Tooltip("Saúde máxima do jogador")]
-    [SerializeField] private int maxHealth = 10;
+    //[Header("Health Settings")]
+    //[Tooltip("Saúde máxima do jogador")]
+    //[SerializeField] private int maxHealth = 10;
 
     [Header("Movement Settings")]
     [Tooltip("Velocidade de movimento do jogador")]
@@ -60,8 +60,8 @@ public class PlayerController : MonoBehaviour
     private PlayerAnimation playerAnimation;
 
     // Propriedades públicas para acesso externo
-    public int CurrentHealth => currentHealth;
-    public int MaxHealth => maxHealth;
+    //public int CurrentHealth => currentHealth;
+    //public int MaxHealth => maxHealth;
     public ToolHitBox toolHitBox;
     public PlayerItems playerItems;
     public static PlayerController playerController;
@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
 
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
-        currentHealth = maxHealth;
+        //currentHealth = maxHealth;
 
         // Configuração das ações do Input System
         if (playerInput != null && playerInput.actions != null)
@@ -456,28 +456,28 @@ public class PlayerController : MonoBehaviour
     /// Aplica dano ao jogador e reduz sua saúde.
     /// </summary>
     /// <param name="damageAmount">Quantidade de dano a aplicar</param>
-    public void TakeDamage(int damageAmount)
-    {
-        currentHealth -= damageAmount;
-        if (currentHealth < 0) currentHealth = 0;
+    //public void TakeDamage(int damageAmount)
+    //{
+    //    currentHealth -= damageAmount;
+    //    if (currentHealth < 0) currentHealth = 0;
 
-        Debug.Log($"[PlayerController] Jogador recebeu {damageAmount} de dano. Saúde atual: {currentHealth}/{maxHealth}");
+    //    Debug.Log($"[PlayerController] Jogador recebeu {damageAmount} de dano. Saúde atual: {currentHealth}/{maxHealth}");
 
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    }
+    //    if (currentHealth <= 0)
+    //    {
+    //        Die();
+    //    }
+    //}
 
     /// <summary>
     /// Trata a morte do jogador quando a vida chega a zero.
     /// </summary>
-    private void Die()
-    {
-        Debug.Log("[PlayerController] O jogador foi derrotado!");
-        // TODO: Desencadear tela de derrota / Game Over.
-        SceneManager.LoadScene("GameOverLose");
-    }
+    //private void Die()
+    //{
+    //    Debug.Log("[PlayerController] O jogador foi derrotado!");
+    //    // TODO: Desencadear tela de derrota / Game Over.
+    //    SceneManager.LoadScene("GameOverLose");
+    //}
 
     private void OnDrawGizmosSelected()
     {

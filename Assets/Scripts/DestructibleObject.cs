@@ -8,7 +8,8 @@ using UnityEngine;
 public enum DestructibleType
 {
     Rock,
-    Wood
+    Wood,
+    Iron
 }
 
 /// <summary>
@@ -106,19 +107,25 @@ public class DestructibleObject : MonoBehaviour
     /// </summary>
     public void DropLoot()
     {
-        switch (objectType)
-        {
-            case DestructibleType.Rock:
-                // TODO: Instanciar prefab do item Pedrinha na posição do objeto.
-                Debug.Log($"[DestructibleObject] Stub: Droppou Pedrinha(s) em {transform.position}");
-                break;
-            case DestructibleType.Wood:
-                // TODO: Instanciar prefab do item Madeira na posição do objeto.
-                Debug.Log($"[DestructibleObject] Stub: Droppou Madeira em {transform.position}");
-                GameObject instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
-                instanciated.GetComponent<CollectableObject>().itemCount = fortune;
-                break;
-        }
+        //switch (objectType)
+        //{
+        //    case DestructibleType.Rock:
+        //        GameObject rock = Instantiate(drop1, transform.position, Quaternion.identity);
+        //        rock.GetComponent<CollectableObject>().itemCount = fortune;
+        //        break;
+        //    case DestructibleType.Wood:
+        //        GameObject wood = Instantiate(drop1, transform.position, Quaternion.identity);
+        //        wood.GetComponent<CollectableObject>().itemCount = fortune;
+        //        break;
+        //    case DestructibleType.Iron:
+        //        GameObject iron = Instantiate(drop1, transform.position, Quaternion.identity);
+        //        iron.GetComponent<CollectableObject>().itemCount = fortune;
+        //        break;
+        //}
+
+        GameObject instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
+        instanciated.GetComponent<CollectableObject>().itemCount = fortune;
+
     }
 
     /// <summary>

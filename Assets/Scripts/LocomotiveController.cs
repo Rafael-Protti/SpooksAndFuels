@@ -218,25 +218,25 @@ public class LocomotiveController : MonoBehaviour
     /// Função disparada ao colidir com um fantasma no trilho.
     /// Fantasmas comuns são eliminados imediatamente pela locomotiva; raros causam dano na locomotiva.
     /// </summary>
-    public void OnGhostCollision(GameObject ghost)
-    {
-        if (ghost == null) return;
-        GhostEnemy ghostEnemy = ghost.GetComponent<GhostEnemy>();
-        if (ghostEnemy != null)
-        {
-            if (ghostEnemy.Type == GhostType.Common)
-            {
-                Debug.Log($"[LocomotiveController] Fantasma Comum atropelado pela locomotiva: {ghost.name}");
-                ghostEnemy.TakeDamage(ghostEnemy.CurrentHealth, 1, false); // Morre ao colidir
-            }
-            else
-            {
-                Debug.Log($"[LocomotiveController] Fantasma Raro colidiu com a locomotiva!");
-                TakeDamage(1); // Causa 1 de dano na locomotiva
-                ghostEnemy.TakeDamage(0, 1, false); // Imune à colisão
-            }
-        }
-    }
+    //public void OnGhostCollision(GameObject ghost)
+    //{
+    //    if (ghost == null) return;
+    //    GhostEnemy ghostEnemy = ghost.GetComponent<GhostEnemy>();
+    //    if (ghostEnemy != null)
+    //    {
+    //        if (ghostEnemy.Type == GhostType.Common)
+    //        {
+    //            Debug.Log($"[LocomotiveController] Fantasma Comum atropelado pela locomotiva: {ghost.name}");
+    //            ghostEnemy.TakeDamage(ghostEnemy.CurrentHealth, 1, false); // Morre ao colidir
+    //        }
+    //        else
+    //        {
+    //            Debug.Log($"[LocomotiveController] Fantasma Raro colidiu com a locomotiva!");
+    //            TakeDamage(1); // Causa 1 de dano na locomotiva
+    //            ghostEnemy.TakeDamage(0, 1, false); // Imune à colisão
+    //        }
+    //    }
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
@@ -248,19 +248,19 @@ public class LocomotiveController : MonoBehaviour
             StopEngine();
         }
 
-        GhostEnemy ghost = other.gameObject.GetComponent<GhostEnemy>();
-        if (ghost != null)
-        {
-            if (!isEngineOn) return;
-            OnGhostCollision(ghost.gameObject);
-        }
-
         PlayerController player = other.gameObject.GetComponent<PlayerController>();
         if (player != null)
         {
             playerAboard = true;
             ToggleEngine();
         }
+
+        //GhostEnemy ghost = other.gameObject.GetComponent<GhostEnemy>();
+        //if (ghost != null)
+        //{
+        //    if (!isEngineOn) return;
+        //    OnGhostCollision(ghost.gameObject);
+        //}
     }
 
     private void OnTriggerExit(Collider other)

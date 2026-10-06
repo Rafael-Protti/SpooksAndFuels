@@ -106,8 +106,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DestructibleObject
   objectType: 1
   health: 3
-  hitShakeMagnitude: 0.08
-  hitShakeDuration: 0.12
+  hitShakeMagnitude: 0.15
+  hitShakeDuration: 0.25
   drop1: {fileID: 2575625426565695014, guid: 62dc77e9f3f583c49b59e84d7967b66c, type: 3}
 --- !u!65 &3386355567460299696
 BoxCollider:

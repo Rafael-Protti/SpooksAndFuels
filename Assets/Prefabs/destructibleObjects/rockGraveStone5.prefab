@@ -127,6 +127,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DestructibleObject
   objectType: 0
   health: 3
-  hitShakeMagnitude: 0.08
-  hitShakeDuration: 0.12
+  hitShakeMagnitude: 0.15
+  hitShakeDuration: 0.25
   drop1: {fileID: 4788713017828863329, guid: 29526ae955b5fe84b8d9123f341a2ea9, type: 3}

@@ -47,7 +47,6 @@ public class GhostEnemy : MonoBehaviour
     private int currentHealth;
     private float lastAttackTime = -999f;
     private Transform targetTransform;
-    private PlayerController playerTarget;
     private LocomotiveController locomotiveTarget;
     private Animator animator;
 
@@ -102,28 +101,15 @@ public class GhostEnemy : MonoBehaviour
     /// </summary>
     private void FindTarget()
     {
-        if (ghostType == GhostType.Common)
+        if (locomotiveTarget == null)
         {
-            if (playerTarget == null)
-            {
-                playerTarget = Object.FindAnyObjectByType<PlayerController>();
-            }
-            if (playerTarget != null)
-            {
-                targetTransform = playerTarget.transform;
-            }
+            locomotiveTarget = Object.FindAnyObjectByType<LocomotiveController>();   
         }
-        else
+        if (locomotiveTarget != null)
         {
-            if (locomotiveTarget == null)
-            {
-                locomotiveTarget = Object.FindAnyObjectByType<LocomotiveController>();
-            }
-            if (locomotiveTarget != null)
-            {
-                targetTransform = locomotiveTarget.transform;
-            }
+            targetTransform = locomotiveTarget.transform;
         }
+
     }
 
     /// <summary>
@@ -135,16 +121,7 @@ public class GhostEnemy : MonoBehaviour
 
         lastAttackTime = Time.time;
 
-        if (ghostType == GhostType.Common && playerTarget != null)
-        {
-            Debug.Log($"[GhostEnemy] Fantasma Comum causou {attackDamage} de dano ao Jogador!");
-            playerTarget.TakeDamage(attackDamage);
-        }
-        else if (ghostType == GhostType.Rare && locomotiveTarget != null)
-        {
-            Debug.Log($"[GhostEnemy] Fantasma Raro causou {attackDamage} de dano à Locomotiva!");
-            locomotiveTarget.TakeDamage(attackDamage);
-        }
+        locomotiveTarget.TakeDamage(attackDamage);
 
         Recoil();
     }
