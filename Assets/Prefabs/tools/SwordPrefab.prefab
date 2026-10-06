@@ -101,7 +101,6 @@ GameObject:
   - component: {fileID: 4460270284031758571}
   - component: {fileID: 3078935665218484432}
   - component: {fileID: 4524447523903486199}
-  - component: {fileID: 5490714636148132885}
   m_Layer: 0
   m_Name: SwordPrefab
   m_TagString: Untagged
@@ -117,14 +116,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6088005234606067030}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5290917669692668005}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!65 &3078935665218484432
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -160,23 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolItem
   toolType: 0
   toolName: Espada
-  vagonLocation: {fileID: 0}
   damage: 1
   swingSpeed: 1
   dropFortune: 1
   inInventory: 0
---- !u!114 &5490714636148132885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6088005234606067030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf5230dcc26446246862ec90b0510ded, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
-  defaultActionName: Interagir
-  interactionRadius: 3.5
-  promptOffset: {x: 0, y: 2, z: 0}

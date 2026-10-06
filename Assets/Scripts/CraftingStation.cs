@@ -31,6 +31,10 @@ public class CraftingStation : MonoBehaviour
     public StationType stationType;
     public List<UpgradeTier> upgrades = new List<UpgradeTier>();
 
+    [Header("Tool Unlock")]
+    [Tooltip("Prefab da ferramenta a ser entregue no primeiro upgrade (Deixe vazio para a locomotiva)")]
+    public GameObject toolPrefab;
+
     private int currentTierIndex = 0;
     private InteractableObject interactableObject;
     private PlayerItems playerItems; // Referência ao inventário do jogador
@@ -126,6 +130,17 @@ public class CraftingStation : MonoBehaviour
 
     private void ApplyUpgrade(StationType type, int tierIndex)
     {
+        // Se for o primeiro upgrade de uma ferramenta, entrega para o jogador
+        if (tierIndex == 0 && type != StationType.Locomotive && toolPrefab != null)
+        {
+            GameObject toolObj = Instantiate(toolPrefab);
+            ToolItem toolItem = toolObj.GetComponent<ToolItem>();
+            if (toolItem != null && playerItems != null)
+            {
+                playerItems.AddTool(toolItem);
+            }
+        }
+
         // TODO: Implementar a lógica real de aplicação de cada upgrade nos respectivos sistemas
         switch (type)
         {

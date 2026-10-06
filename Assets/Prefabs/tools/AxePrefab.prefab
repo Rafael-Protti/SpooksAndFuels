@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4459536954106339279}
   - component: {fileID: 6577953799078761260}
   - component: {fileID: 5902436093921674639}
-  - component: {fileID: 8296383163804095389}
   m_Layer: 0
   m_Name: AxePrefab
   m_TagString: Untagged
@@ -27,14 +26,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798615129329399371}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5297893269684932599}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!65 &6577953799078761260
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70,26 +69,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolItem
   toolType: 2
   toolName: Machado
-  vagonLocation: {fileID: 0}
   damage: 1
   swingSpeed: 1
   dropFortune: 1
   inInventory: 0
---- !u!114 &8296383163804095389
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1798615129329399371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf5230dcc26446246862ec90b0510ded, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
-  defaultActionName: Interagir
-  interactionRadius: 3.5
-  promptOffset: {x: 0, y: 2, z: 0}
 --- !u!1 &5297893269685359575
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,13 +99,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5297893269685359575}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4459536954106339279}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!33 &5297893269688324055
 MeshFilter:
   m_ObjectHideFlags: 0

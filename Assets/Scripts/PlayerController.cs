@@ -385,13 +385,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
-            // 2. Interação com Ferramentas (ToolItem)
-            ToolItem tool = interactable.GetComponent<ToolItem>();
-            if (tool != null)
-            {
-                GetComponent<PlayerItems>().AddTool(tool);
-                return;
-            }
+
 
             // 3. Interação com itens coletáveis
             CollectableObject item = interactable.GetComponent<CollectableObject>();

@@ -27,12 +27,8 @@ public class ToolItem : MonoBehaviour
     [Tooltip("Nome de exibição da ferramenta")]
     [SerializeField] private string toolName = "Espada";
 
-    [Tooltip("Posição da ferramenta no vagão")]
-    [SerializeField] private Transform vagonLocation;
-
     private bool isEquipped;
     private Collider toolCollider;
-    private InteractableObject interactable;
     private Quaternion originalLocalRotation;
 
     public ToolType Type => toolType;
@@ -46,25 +42,6 @@ public class ToolItem : MonoBehaviour
     private void Awake()
     {
         toolCollider = GetComponent<Collider>();
-        interactable = GetComponent<InteractableObject>();
-
-        if (interactable == null)
-        {
-            interactable = gameObject.AddComponent<InteractableObject>();
-        }
-
-        // Configurar a legenda de interação como "Equipar"
-        interactable.SetDynamicActionTextProvider(() => "Equipar");
-    }
-
-    private void Start()
-    {
-        // Posiciona no vagão apenas se a referência estiver configurada
-        if (vagonLocation != null)
-        {
-            transform.position = vagonLocation.position;
-            transform.SetParent(vagonLocation);
-        }
     }
 
     /// <summary>
@@ -75,17 +52,11 @@ public class ToolItem : MonoBehaviour
         isEquipped = true;
         if (inInventory) return;
 
-        transform.position = socket.transform.position;
-        originalLocalRotation = transform.rotation;
+        // SetParent(socket, false) preserva a posição e rotação locais originais do prefab,
+        // ignorando se a mão (socket) está rotacionada no meio de uma animação.
+        transform.SetParent(socket, false);
 
-        if (transform.parent != socket)
-        {
-            transform.SetParent(socket);
-        }
-
-        transform.rotation = originalLocalRotation;
         if (toolCollider != null) toolCollider.enabled = false;
-        if (interactable != null) interactable.enabled = false;
 
         Debug.Log($"[ToolItem] {toolName} equipada com sucesso no jogador.");
         inInventory = true;
