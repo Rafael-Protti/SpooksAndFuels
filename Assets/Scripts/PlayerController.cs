@@ -401,6 +401,14 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
+            // 4. Interação com a Estação de Crafting
+            CraftingStation crafting = interactable.GetComponent<CraftingStation>();
+            if (crafting != null)
+            {
+                crafting.Interact();
+                return;
+            }
+
             // TODO: Interagir com outros itens do chão, baús ou caixas.
             Debug.Log($"[PlayerController] Interagiu com {interactable.gameObject.name}: {interactable.GetActionText()}");
             return;

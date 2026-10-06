@@ -33,46 +33,8 @@ public class LocomotiveUI : MonoBehaviour
     [Tooltip("Texto com o valor do combustível (ex: COMBUSTÍVEL: 100%)")]
     [SerializeField] private Text fuelText;
 
-    private Camera mainCamera;
-
-    public float HeightOffset
-    {
-        get => heightOffset;
-        set => heightOffset = value;
-    }
-
-    private void Awake()
-    {
-        mainCamera = Camera.main;
-        if (locomotive == null)
-        {
-            locomotive = GetComponentInParent<LocomotiveController>();
-        }
-    }
-
-    private void Start()
-    {
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main;
-        }
-    }
-
     private void LateUpdate()
     {
-        if (locomotive == null) return;
-
-        // Atualiza a posição da UI no mundo acima da locomotiva
-        Vector3 targetPosition = locomotive.transform.position + Vector3.up * heightOffset + additionalOffset;
-        transform.position = targetPosition;
-
-        // Efeito Billboard: encarar a câmera principal
-        if (mainCamera == null) mainCamera = Camera.main;
-        if (mainCamera != null)
-        {
-            transform.rotation = mainCamera.transform.rotation;
-        }
-
         UpdateLocomotiveBars();
     }
 

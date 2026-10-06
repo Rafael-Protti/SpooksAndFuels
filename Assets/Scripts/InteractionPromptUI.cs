@@ -19,6 +19,23 @@ public class InteractionPromptUI : MonoBehaviour
     [Tooltip("Container principal do prompt para ativar/desativar")]
     [SerializeField] private GameObject promptContainer;
 
+    [Header("Crafting UI")]
+    [Tooltip("Container (ex: HorizontalLayoutGroup) onde os ícones dos ingredientes serão instanciados")]
+    [SerializeField] private GameObject recipeContainer;
+    
+    [Tooltip("Prefab do ingrediente (deve conter o script RecipeIngredientUI)")]
+    [SerializeField] private RecipeIngredientUI ingredientPrefab;
+
+    [Tooltip("Mapeamento visual para os ícones de cada recurso")]
+    [SerializeField] private ItemIcon[] itemIcons;
+
+    [System.Serializable]
+    public struct ItemIcon
+    {
+        public PlayerItems.ItemType type;
+        public Sprite icon;
+    }
+
     [Header("Player Input Reference")]
     [Tooltip("Referência ao PlayerInput para detectar mudança de esquema de controle")]
     [SerializeField] private PlayerInput playerInput;
@@ -105,7 +122,7 @@ public class InteractionPromptUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Atualiza o texto do botão ("E" ou "Y") e a descrição da ação.
+    /// Atualiza o texto do botão ("E" ou "Y") e a descrição da ação, além da receita de crafting (se houver).
     /// </summary>
     private void UpdatePromptContent()
     {
@@ -123,6 +140,42 @@ public class InteractionPromptUI : MonoBehaviour
         {
             actionText.text = currentTarget.GetActionText();
         }
+
+        // --- Lógica de Receita de Crafting ---
+        if (recipeContainer != null)
+        {
+            // Limpa os ícones antigos
+            foreach (Transform child in recipeContainer.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            recipeContainer.SetActive(false);
+
+            CraftingStation crafting = currentTarget.GetComponent<CraftingStation>();
+            if (crafting != null && ingredientPrefab != null)
+            {
+                var tier = crafting.GetCurrentTier();
+                if (tier != null && tier.requirements.Count > 0)
+                {
+                    recipeContainer.SetActive(true);
+                    foreach (var req in tier.requirements)
+                    {
+                        RecipeIngredientUI ing = Instantiate(ingredientPrefab, recipeContainer.transform);
+                        ing.Setup(GetIconFor(req.itemType), req.amount);
+                    }
+                }
+            }
+        }
+    }
+
+    private Sprite GetIconFor(PlayerItems.ItemType type)
+    {
+        if (itemIcons == null) return null;
+        foreach (var mapping in itemIcons)
+        {
+            if (mapping.type == type) return mapping.icon;
+        }
+        return null;
     }
 
     /// <summary>
