@@ -251,6 +251,8 @@ public class PlayerItems : MonoBehaviour
 
     private void UseItem(ItemType itemType)
     {
+        LocomotiveController loco = Object.FindAnyObjectByType<LocomotiveController>();
+
         switch (itemType)
         {
             case ItemType.Wood:
@@ -260,7 +262,11 @@ public class PlayerItems : MonoBehaviour
                 // TODO: Adicione uso do ectoplasma (abastecer locomotiva)
                 break;
             case ItemType.SuperEctoplasm:
-                // TODO: Adicione uso do super ectoplasma
+                if (loco != null)
+                {
+                    loco.Refuel(10f, true); // Abastece e aplica boost fixo
+                    AddItem(itemType, -1);  // Desconta 1 item do inventário
+                }
                 break;
             case ItemType.Stone:
                 // TODO: Adicione uso da pedra

@@ -52,7 +52,7 @@ public class LocomotiveUI : MonoBehaviour
 
         if (healthText != null)
         {
-            healthText.text = $"VIDA  {locomotive.CurrentHealth} / {locomotive.MaxHealth}";
+            healthText.text = $"LOCOMOTIVA  {locomotive.CurrentHealth} / {locomotive.MaxHealth}";
         }
 
         // 2. Atualizar Barra e Texto de Combustível (Intermediária)

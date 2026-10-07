@@ -15,6 +15,12 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Prefab do fantasma raro")]
     [SerializeField] private GameObject rareGhostPrefab;
 
+    [Tooltip("Prefab do fantasma frágil")]
+    [SerializeField] private GameObject fragileGhostPrefab;
+
+    [Tooltip("Prefab do fantasma gigante")]
+    [SerializeField] private GameObject giantGhostPrefab;
+
     [Header("Probability & Frequency Settings")]
     [Tooltip("Intervalo de tempo entre as tentativas de spawn (em segundos)")]
     [SerializeField] private float spawnInterval = 4.0f;
@@ -22,6 +28,14 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Probabilidade de spawnar um fantasma RARO (0.0 = 0% até 1.0 = 100%). Ajustável no Inspector.")]
     [Range(0f, 1f)]
     [SerializeField] private float rareGhostProbability = 0.2f;
+
+    [Tooltip("Probabilidade de spawnar um fantasma FRÁGIL")]
+    [Range(0f, 1f)]
+    [SerializeField] private float fragileGhostProbability = 0.15f;
+
+    [Tooltip("Probabilidade de spawnar um fantasma GIGANTE")]
+    [Range(0f, 1f)]
+    [SerializeField] private float giantGhostProbability = 0.05f;
 
     [Tooltip("Número máximo de inimigos ativos no mapa simultaneamente")]
     [SerializeField] private int maxEnemiesAlive = 25;
@@ -86,18 +100,39 @@ public class EnemySpawner : MonoBehaviour
         if (TryGetValidSpawnPosition(out spawnPosition))
         {
             // Sortear com base na probabilidade configurada no Inspector
-            bool spawnRare = Random.value < rareGhostProbability;
-            GameObject prefabToSpawn = spawnRare ? rareGhostPrefab : commonGhostPrefab;
+            float roll = Random.value;
+            GameObject prefabToSpawn = commonGhostPrefab;
+            string ghostName = "GhostEnemy_Common";
+            GhostType fallbackType = GhostType.Common;
+
+            if (roll < giantGhostProbability)
+            {
+                prefabToSpawn = giantGhostPrefab;
+                ghostName = "GhostEnemy_Giant";
+                fallbackType = GhostType.Giant;
+            }
+            else if (roll < giantGhostProbability + rareGhostProbability)
+            {
+                prefabToSpawn = rareGhostPrefab;
+                ghostName = "GhostEnemy_Rare";
+                fallbackType = GhostType.Rare;
+            }
+            else if (roll < giantGhostProbability + rareGhostProbability + fragileGhostProbability)
+            {
+                prefabToSpawn = fragileGhostPrefab;
+                ghostName = "GhostEnemy_Fragile";
+                fallbackType = GhostType.Fragile;
+            }
 
             if (prefabToSpawn != null)
             {
                 GameObject newEnemy = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
-                newEnemy.name = spawnRare ? "GhostEnemy_Rare" : "GhostEnemy_Common";
+                newEnemy.name = ghostName;
             }
             else
             {
                 // Fallback: criar um objeto com o componente GhostEnemy dinamicamente se o prefab não estiver atribuído
-                CreatePlaceholderGhost(spawnPosition, spawnRare ? GhostType.Rare : GhostType.Common);
+                CreatePlaceholderGhost(spawnPosition, fallbackType);
             }
         }
     }
@@ -144,20 +179,31 @@ public class EnemySpawner : MonoBehaviour
     private void CreatePlaceholderGhost(Vector3 position, GhostType type)
     {
         GameObject ghostObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        ghostObj.name = type == GhostType.Rare ? "GhostEnemy_Rare" : "GhostEnemy_Common";
+        ghostObj.name = "GhostEnemy_" + type.ToString();
         ghostObj.transform.position = position;
-        ghostObj.transform.localScale = type == GhostType.Rare ? new Vector3(1.3f, 1.3f, 1.3f) : new Vector3(0.9f, 0.9f, 0.9f);
+        
+        float scale = 0.9f;
+        if (type == GhostType.Rare) scale = 1.3f;
+        else if (type == GhostType.Giant) scale = 2.5f;
+        else if (type == GhostType.Fragile) scale = 0.6f;
+
+        ghostObj.transform.localScale = new Vector3(scale, scale, scale);
 
         // Ajustar colisor para ser Trigger
         Collider col = ghostObj.GetComponent<Collider>();
         if (col != null) col.isTrigger = true;
 
-        // Cor do fantasma (Ciano para Comum, Roxo/Vermelho para Raro)
+        // Cor do fantasma
         Renderer rend = ghostObj.GetComponent<Renderer>();
         if (rend != null)
         {
             rend.material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            rend.material.color = type == GhostType.Rare ? new Color(0.8f, 0.1f, 0.9f) : new Color(0.2f, 0.8f, 0.9f);
+            Color color = new Color(0.2f, 0.8f, 0.9f); // Comum (Ciano)
+            if (type == GhostType.Rare) color = new Color(0.8f, 0.1f, 0.9f); // Roxo
+            else if (type == GhostType.Giant) color = new Color(1f, 0.2f, 0.2f); // Vermelho
+            else if (type == GhostType.Fragile) color = new Color(0.8f, 0.9f, 0.9f); // Azul claro
+
+            rend.material.color = color;
         }
 
         GhostEnemy ghostScript = ghostObj.AddComponent<GhostEnemy>();

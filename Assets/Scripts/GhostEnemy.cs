@@ -9,7 +9,11 @@ using UnityEngine;
 public enum GhostType
 {
     Common,
-    Rare
+    Rare,
+    Fragile,
+    Giant,
+    GiantMinion,
+    GiantMiniature
 }
 
 /// <summary>
@@ -36,6 +40,12 @@ public class GhostEnemy : MonoBehaviour
 
     [Tooltip("Distância mínima de contato para aplicar o ataque")]
     [SerializeField] private float attackRadius = 1.2f;
+
+    [Header("Giant Drops/Spawns")]
+    [Tooltip("Prefab do minion gigante (spawnado ao morrer o gigante)")]
+    [SerializeField] private GameObject giantMinionPrefab;
+    [Tooltip("Prefab da miniatura gigante (spawnada ao morrer o minion gigante)")]
+    [SerializeField] private GameObject giantMiniaturePrefab;
 
     public Transform drop1;
     public Transform drop2;
@@ -163,6 +173,24 @@ public class GhostEnemy : MonoBehaviour
         attackRadius = 0;
         moveSpeed = 0;
         Debug.Log($"[GhostEnemy] {ghostType} foi derrotado!");
+
+        if (ghostType == GhostType.Giant && giantMinionPrefab != null)
+        {
+            SpawnChildren(giantMinionPrefab, 2);
+        }
+        else if (ghostType == GhostType.GiantMinion && giantMiniaturePrefab != null)
+        {
+            SpawnChildren(giantMiniaturePrefab, 2);
+        }
+    }
+
+    private void SpawnChildren(GameObject prefab, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 offset = new Vector3(Random.Range(-1.5f, 1.5f), 0, Random.Range(-1.5f, 1.5f));
+            Instantiate(prefab, transform.position + offset, transform.rotation);
+        }
     }
 
 
@@ -181,19 +209,14 @@ public class GhostEnemy : MonoBehaviour
     /// </summary>
     public void DropLoot()
     {
-        if (ghostType == GhostType.Common)
+        if (ghostType == GhostType.Common || ghostType == GhostType.GiantMiniature || ghostType == GhostType.GiantMinion || ghostType == GhostType.Fragile)
         {
-            // TODO: Instanciar prefab do item Ectoplasma na posição atual
-            Debug.Log($"[GhostEnemy] Stub: Droppou Ectoplasma na posição {transform.position}");
             Transform instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
             instanciated.GetComponent<CollectableObject>().itemCount = fortune;
         }
         else
         {
             // TODO: Instanciar prefab do item Ectoplasma ou Super Ectoplasma (chance de boost) na posição atual
-            bool isSuperBoost = Random.value <= 0.3f; // 30% de chance de Super Ectoplasma
-            string lootName = isSuperBoost ? "Super Ectoplasma (Boost)" : "Ectoplasma";
-            Debug.Log($"[GhostEnemy] Stub: Droppou {lootName} na posição {transform.position}");
             Transform instanciated = Instantiate(drop2, transform.position, Quaternion.identity);
             instanciated.GetComponent<CollectableObject>().itemCount = fortune;
         }

@@ -35,12 +35,8 @@ public class LocomotiveController : MonoBehaviour
     [Tooltip("Distância máxima para o jogador interagir com a locomotiva")]
     [SerializeField] private float interactionRadius = 4.0f;
 
-    // Estado interno
     private int currentHealth;
     private float currentFuel;
-    private bool isSpecialSpeedActive;
-    private float specialSpeedMultiplier = 1.0f;
-    private float specialSpeedTimer = 0.0f;
     private bool playerAboard;
 
     // Propriedades públicas para UI e sistemas
@@ -76,7 +72,6 @@ public class LocomotiveController : MonoBehaviour
 
     private void Update()
     {
-        HandleSpeedBoostTimer();
         HandleLocomotiveMovement();
     }
 
@@ -98,8 +93,7 @@ public class LocomotiveController : MonoBehaviour
         }
 
         // Calcular nova distância e atualizar posição
-        float effectiveSpeed = moveSpeed * (isSpecialSpeedActive ? specialSpeedMultiplier : 1.0f);
-        currentDistance += effectiveSpeed * Time.deltaTime;
+        currentDistance += moveSpeed * Time.deltaTime;
 
         trackPath.GetPositionAndRotationAtDistance(currentDistance, out Vector3 nextPos, out Quaternion nextRot, out bool isAtEnd);
 
@@ -113,22 +107,7 @@ public class LocomotiveController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Gerencia o temporizador do efeito de velocidade especial (Super Ectoplasma).
-    /// </summary>
-    private void HandleSpeedBoostTimer()
-    {
-        if (isSpecialSpeedActive)
-        {
-            specialSpeedTimer -= Time.deltaTime;
-            if (specialSpeedTimer <= 0f)
-            {
-                isSpecialSpeedActive = false;
-                specialSpeedMultiplier = 1.0f;
-                Debug.Log("[LocomotiveController] Efeito de velocidade extra expirou.");
-            }
-        }
-    }
+
 
     /// <summary>
     /// Alterna entre ligar e parar a locomotiva.
@@ -174,7 +153,7 @@ public class LocomotiveController : MonoBehaviour
     /// Função para abastecer a locomotiva com combustível (Madeira, Ectoplasma ou Super Ectoplasma).
     /// </summary>
     /// <param name="fuelAmount">Quantidade de combustível adicionada</param>
-    /// <param name="isSuperEctoplasm">Se verdadeiro, ativa boost temporário de velocidade</param>
+    /// <param name="isSuperEctoplasm">Se verdadeiro, aplica um boost fixo na velocidade da locomotiva</param>
     public void Refuel(float fuelAmount, bool isSuperEctoplasm = false)
     {
         currentFuel = Mathf.Clamp(currentFuel + fuelAmount, 0f, maxFuel);
@@ -182,19 +161,17 @@ public class LocomotiveController : MonoBehaviour
 
         if (isSuperEctoplasm)
         {
-            ApplySpeedBoost(1.5f, 5.0f); // 50% mais rápido por 5 segundos
+            ApplyPermanentSpeedBoost(1.0f); // 1.0f a mais de velocidade
         }
     }
 
     /// <summary>
-    /// Aplica um boost temporário de velocidade à locomotiva.
+    /// Aplica um boost fixo e permanente de velocidade à locomotiva.
     /// </summary>
-    public void ApplySpeedBoost(float multiplier, float duration)
+    public void ApplyPermanentSpeedBoost(float addedSpeed)
     {
-        isSpecialSpeedActive = true;
-        specialSpeedMultiplier = multiplier;
-        specialSpeedTimer = duration;
-        Debug.Log($"[LocomotiveController] Boost de velocidade ativado! multiplicador: {multiplier}x por {duration}s.");
+        moveSpeed += addedSpeed;
+        Debug.Log($"[LocomotiveController] Boost permanente ativado! Nova velocidade: {moveSpeed}.");
     }
 
     /// <summary>

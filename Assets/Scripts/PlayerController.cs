@@ -372,15 +372,25 @@ public class PlayerController : MonoBehaviour
                 //    return;
                 //}
                 var playerItems = GetComponent<PlayerItems>();
-                if (playerItems.GetItemCount(PlayerItems.ItemType.Wood) > 0)
+                var currentSlot = playerItems.inventory[playerItems.selectedSlot];
+
+                if (!currentSlot.isTool && currentSlot.count > 0)
                 {
-                    locomotive.Refuel(10);
-                    playerItems.AddItem(PlayerItems.ItemType.Wood, -1);
-                }
-                else if (playerItems.GetItemCount(PlayerItems.ItemType.Ectoplasm) > 0)
-                {
-                    locomotive.Refuel(2);
-                    playerItems.AddItem(PlayerItems.ItemType.Ectoplasm, -1);
+                    if (currentSlot.itemType == PlayerItems.ItemType.Wood)
+                    {
+                        locomotive.Refuel(10);
+                        playerItems.AddItem(PlayerItems.ItemType.Wood, -1);
+                    }
+                    else if (currentSlot.itemType == PlayerItems.ItemType.Ectoplasm)
+                    {
+                        locomotive.Refuel(2);
+                        playerItems.AddItem(PlayerItems.ItemType.Ectoplasm, -1);
+                    }
+                    else if (currentSlot.itemType == PlayerItems.ItemType.SuperEctoplasm)
+                    {
+                        locomotive.Refuel(5, true);
+                        playerItems.AddItem(PlayerItems.ItemType.SuperEctoplasm, -1);
+                    }
                 }
                 return;
             }
