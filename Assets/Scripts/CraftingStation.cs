@@ -139,23 +139,88 @@ public class CraftingStation : MonoBehaviour
             {
                 playerItems.AddTool(toolItem);
             }
+            // Primeiro craft de ferramenta não tem buff adicional – a ferramenta em si é o upgrade
+            return;
         }
 
-        // TODO: Implementar a lógica real de aplicação de cada upgrade nos respectivos sistemas
         switch (type)
         {
             case StationType.Locomotive:
-                // Aplicar melhorias da locomotiva (velocidade, combustível, vida, etc)
+                ApplyLocomotiveUpgrade(tierIndex);
                 break;
             case StationType.Broom:
-                // Aplicar melhorias da vassoura (ataque, velocidade)
+                ApplyToolUpgrade(ToolType.Sword, tierIndex);
                 break;
             case StationType.Axe:
-                // Aplicar melhorias do machado (tempo de quebra, drop)
+                ApplyToolUpgrade(ToolType.Axe, tierIndex);
                 break;
             case StationType.Pickaxe:
-                // Aplicar melhorias da picareta (tempo de quebra, drop)
+                ApplyToolUpgrade(ToolType.Pickaxe, tierIndex);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Aplica o upgrade da locomotiva via LocomotiveController.
+    /// Tier 0: 2x velocidade | Tier 1: 2x combustível | Tier 2: 2x vida | Tier 3: 1.5x tudo
+    /// </summary>
+    private void ApplyLocomotiveUpgrade(int tierIndex)
+    {
+        LocomotiveController loco = Object.FindAnyObjectByType<LocomotiveController>();
+        if (loco == null)
+        {
+            Debug.LogWarning("[CraftingStation] LocomotiveController não encontrado para aplicar upgrade.");
+            return;
+        }
+        loco.ApplyLocomotiveUpgrade(tierIndex);
+    }
+
+    /// <summary>
+    /// Aplica o upgrade em uma ferramenta do inventário do jogador.
+    /// GDD:
+    ///   Vassoura  - Upg1: +1 ataque | Upg2: -1 tempo/ataque | Upg3: +1 ataque &amp; -1 tempo/ataque
+    ///   Picareta  - Upg1: -1 tempo/quebra | Upg2: +1 drop | Upg3: +1 drop &amp; -1 tempo/quebra
+    ///   Machado   - Upg1: -1 tempo/quebra | Upg2: +1 drop | Upg3: +1 drop &amp; -1 tempo/quebra
+    /// </summary>
+    private void ApplyToolUpgrade(ToolType toolType, int tierIndex)
+    {
+        if (playerItems == null) return;
+
+        // Localiza a instância da ferramenta no inventário
+        ToolItem tool = null;
+        foreach (var slot in playerItems.inventory)
+        {
+            if (slot.isTool && slot.toolInstance != null && slot.toolInstance.Type == toolType)
+            {
+                tool = slot.toolInstance;
+                break;
+            }
+        }
+
+        if (tool == null)
+        {
+            Debug.LogWarning($"[CraftingStation] Ferramenta do tipo {toolType} não encontrada no inventário.");
+            return;
+        }
+
+        switch (toolType)
+        {
+            case ToolType.Sword: // Vassoura
+                // Upg1: +1 ataque | Upg2: -1 tempo/ataque | Upg3: +1 ataque & -1 tempo/ataque
+                if (tierIndex == 1) { tool.ApplyDamageUpgrade(); }
+                else if (tierIndex == 2) { tool.ApplySwingSpeedUpgrade(); }
+                else if (tierIndex == 3) { tool.ApplyDamageUpgrade(); tool.ApplySwingSpeedUpgrade(); }
+                break;
+
+            case ToolType.Pickaxe: // Picareta
+            case ToolType.Axe:     // Machado
+                // Upg1: -1 tempo/quebra | Upg2: +1 drop | Upg3: +1 drop & -1 tempo/quebra
+                if (tierIndex == 1) { tool.ApplySwingSpeedUpgrade(); }
+                else if (tierIndex == 2) { tool.ApplyDropFortuneUpgrade(); }
+                else if (tierIndex == 3) { tool.ApplyDropFortuneUpgrade(); tool.ApplySwingSpeedUpgrade(); }
+                break;
+        }
+
+        Debug.Log($"[CraftingStation] {toolType} Upgrade {tierIndex} aplicado! DMG={tool.damage}, Cooldown={tool.swingCooldown:F2}s, Fortune={tool.dropFortune}");
     }
 }

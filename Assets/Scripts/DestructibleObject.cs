@@ -107,25 +107,15 @@ public class DestructibleObject : MonoBehaviour
     /// </summary>
     public void DropLoot()
     {
-        //switch (objectType)
-        //{
-        //    case DestructibleType.Rock:
-        //        GameObject rock = Instantiate(drop1, transform.position, Quaternion.identity);
-        //        rock.GetComponent<CollectableObject>().itemCount = fortune;
-        //        break;
-        //    case DestructibleType.Wood:
-        //        GameObject wood = Instantiate(drop1, transform.position, Quaternion.identity);
-        //        wood.GetComponent<CollectableObject>().itemCount = fortune;
-        //        break;
-        //    case DestructibleType.Iron:
-        //        GameObject iron = Instantiate(drop1, transform.position, Quaternion.identity);
-        //        iron.GetComponent<CollectableObject>().itemCount = fortune;
-        //        break;
-        //}
+        if (drop1 == null) return;
 
-        GameObject instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
-        instanciated.GetComponent<CollectableObject>().itemCount = fortune;
-
+        // Instancia um item por ponto de fortune, espalhados ao redor do objeto
+        for (int i = 0; i < fortune; i++)
+        {
+            Vector3 offset = new Vector3(Random.Range(-0.6f, 0.6f), 0f, Random.Range(-0.6f, 0.6f));
+            GameObject instanciated = Instantiate(drop1, transform.position + offset, Quaternion.identity);
+            instanciated.GetComponent<CollectableObject>().itemCount = 1;
+        }
     }
 
     /// <summary>

@@ -20,6 +20,10 @@ public class InteractableObject : MonoBehaviour
     // Delegate para textos dinâmicos de ação (ex: alternar entre "Ligar" e "Desligar" na locomotiva)
     private Func<string> dynamicActionTextProvider;
 
+    // Delegate opcional de visibilidade condicional.
+    // Quando definido, o prompt só aparece se retornar true.
+    private Func<bool> visibilityCondition;
+
     public float InteractionRadius => interactionRadius;
     public Vector3 PromptOffset => promptOffset;
 
@@ -30,6 +34,20 @@ public class InteractableObject : MonoBehaviour
     {
         dynamicActionTextProvider = provider;
     }
+
+    /// <summary>
+    /// Configura uma condição de visibilidade. Quando definida, o prompt
+    /// só será exibido se a função retornar true.
+    /// </summary>
+    public void SetVisibilityCondition(Func<bool> condition)
+    {
+        visibilityCondition = condition;
+    }
+
+    /// <summary>
+    /// Retorna se este interagível deve ser visível para o jogador agora.
+    /// </summary>
+    public bool IsVisible() => visibilityCondition == null || visibilityCondition.Invoke();
 
     /// <summary>
     /// Retorna o texto atual da ação (ex: "Ligar", "Desligar", "Equipar").

@@ -209,16 +209,21 @@ public class GhostEnemy : MonoBehaviour
     /// </summary>
     public void DropLoot()
     {
-        if (ghostType == GhostType.Common || ghostType == GhostType.GiantMiniature || ghostType == GhostType.GiantMinion || ghostType == GhostType.Fragile)
+        Transform dropPrefab = (ghostType == GhostType.Common
+            || ghostType == GhostType.GiantMiniature
+            || ghostType == GhostType.GiantMinion
+            || ghostType == GhostType.Fragile)
+            ? drop1
+            : drop2;
+
+        if (dropPrefab == null) return;
+
+        // Instancia um item por ponto de fortune, espalhados ao redor da posição de morte
+        for (int i = 0; i < fortune; i++)
         {
-            Transform instanciated = Instantiate(drop1, transform.position, Quaternion.identity);
-            instanciated.GetComponent<CollectableObject>().itemCount = fortune;
-        }
-        else
-        {
-            // TODO: Instanciar prefab do item Ectoplasma ou Super Ectoplasma (chance de boost) na posição atual
-            Transform instanciated = Instantiate(drop2, transform.position, Quaternion.identity);
-            instanciated.GetComponent<CollectableObject>().itemCount = fortune;
+            Vector3 offset = new Vector3(Random.Range(-0.6f, 0.6f), 0f, Random.Range(-0.6f, 0.6f));
+            Transform instanciated = Instantiate(dropPrefab, transform.position + offset, Quaternion.identity);
+            instanciated.GetComponent<CollectableObject>().itemCount = 1;
         }
     }
 

@@ -272,7 +272,11 @@ public class PlayerItems : MonoBehaviour
                 // TODO: Adicione uso da pedra
                 break;
             case ItemType.Iron:
-                // TODO: Adicione uso do ferro (curar locomotiva)
+                if (loco != null)
+                {
+                    loco.Heal(1);
+                    AddItem(itemType, -1);
+                }
                 break;
         }
     }

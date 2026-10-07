@@ -341,6 +341,7 @@ public class PlayerController : MonoBehaviour
         foreach (var obj in interactables)
         {
             if (obj == null || !obj.enabled || !obj.gameObject.activeInHierarchy) continue;
+            if (!obj.IsVisible()) continue;
             float distance = Vector3.Distance(transform.position, obj.transform.position);
             if (distance <= obj.InteractionRadius && distance < minDistance)
             {
@@ -390,6 +391,11 @@ public class PlayerController : MonoBehaviour
                     {
                         locomotive.Refuel(5, true);
                         playerItems.AddItem(PlayerItems.ItemType.SuperEctoplasm, -1);
+                    }
+                    else if (currentSlot.itemType == PlayerItems.ItemType.Iron)
+                    {
+                        locomotive.Heal(1);
+                        playerItems.AddItem(PlayerItems.ItemType.Iron, -1);
                     }
                 }
                 return;

@@ -35,9 +35,18 @@ public class ToolItem : MonoBehaviour
     public string ToolName => toolName;
     public bool IsEquipped => isEquipped;
     public int damage = 1;
-    public int swingSpeed = 1;
+    public float swingCooldown = 1.25f; // Tempo (segundos) entre ataques/quebras
     public int dropFortune = 1;
     public bool inInventory = false;
+
+    /// <summary>Incrementa o dano da ferramenta (+1 por chamada).</summary>
+    public void ApplyDamageUpgrade() => damage++;
+
+    /// <summary>Reduz o cooldown de swing da ferramenta (-0.25s por chamada).</summary>
+    public void ApplySwingSpeedUpgrade() => swingCooldown = Mathf.Max(0.25f, swingCooldown - 0.25f);
+
+    /// <summary>Incrementa a fortuna de drop (+1 por chamada).</summary>
+    public void ApplyDropFortuneUpgrade() => dropFortune++;
 
     private void Awake()
     {

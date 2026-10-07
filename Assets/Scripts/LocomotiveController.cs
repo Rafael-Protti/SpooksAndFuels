@@ -41,9 +41,9 @@ public class LocomotiveController : MonoBehaviour
 
     // Propriedades públicas para UI e sistemas
     public int CurrentHealth => currentHealth;
-    public int MaxHealth => maxHealth;
+    public int MaxHealth { get => maxHealth; private set => maxHealth = value; }
     public float CurrentFuel => currentFuel;
-    public float MaxFuel => maxFuel;
+    public float MaxFuel { get => maxFuel; private set => maxFuel = value; }
     public bool IsEngineOn => isEngineOn;
     public float InteractionRadius => interactionRadius;
     public TrackPath TrackPathRef => trackPath;
@@ -55,13 +55,34 @@ public class LocomotiveController : MonoBehaviour
 
         PlayerController player = GameObject.Find("Player").GetComponent<PlayerController>();
 
-        // Configurar o componente InteractableObject para prover o texto dinâmico ("Ligar" / "Desligar")
+        // Configurar o componente InteractableObject
         InteractableObject interactable = GetComponent<InteractableObject>();
         if (interactable == null)
         {
             interactable = gameObject.AddComponent<InteractableObject>();
         }
-        interactable.SetDynamicActionTextProvider(() => "Abastecer"); //player.CurrentEquippedItem != null ? "Abastecer" : !playerAboard ? "Entre!" : isEngineOn ? "Desligar" : "Ligar"
+
+        // Texto dinâmico: "Consertar" ao segurar Ferro, "Abastecer" para os demais
+        interactable.SetDynamicActionTextProvider(() =>
+        {
+            if (player == null) return "Abastecer";
+            var slot = player.playerItems.inventory[player.playerItems.selectedSlot];
+            if (!slot.isTool && slot.itemType == PlayerItems.ItemType.Iron)
+                return "Consertar";
+            return "Abastecer";
+        });
+
+        // Visibilidade condicional: só mostra o prompt ao segurar itens usáveis na locomotiva
+        interactable.SetVisibilityCondition(() =>
+        {
+            if (player == null) return false;
+            var slot = player.playerItems.inventory[player.playerItems.selectedSlot];
+            if (slot.isTool || slot.count <= 0) return false;
+            return slot.itemType == PlayerItems.ItemType.Ectoplasm
+                || slot.itemType == PlayerItems.ItemType.SuperEctoplasm
+                || slot.itemType == PlayerItems.ItemType.Wood
+                || slot.itemType == PlayerItems.ItemType.Iron;
+        });
     }
 
     private void Start()
@@ -175,6 +196,42 @@ public class LocomotiveController : MonoBehaviour
     }
 
     /// <summary>
+    /// Aplica o upgrade da locomotiva conforme o tier do GDD:
+    /// Tier 0 (Primeiro Craft): 2x velocidade
+    /// Tier 1 (Upgrade 1): 2x combustível máximo
+    /// Tier 2 (Upgrade 2): 2x vida máxima
+    /// Tier 3 (Upgrade 3): 1.5x todos os atributos
+    /// </summary>
+    public void ApplyLocomotiveUpgrade(int tierIndex)
+    {
+        switch (tierIndex)
+        {
+            case 0: // Primeiro Craft: 2x velocidade
+                moveSpeed *= 2f;
+                Debug.Log($"[LocomotiveController] Upgrade 0: Velocidade 2x -> {moveSpeed}");
+                break;
+            case 1: // Upgrade 1: 2x combustível máximo
+                maxFuel *= 2f;
+                currentFuel = Mathf.Clamp(currentFuel, 0f, maxFuel);
+                Debug.Log($"[LocomotiveController] Upgrade 1: Combustível máximo 2x -> {maxFuel}");
+                break;
+            case 2: // Upgrade 2: 2x vida máxima
+                maxHealth *= 2;
+                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                Debug.Log($"[LocomotiveController] Upgrade 2: Vida máxima 2x -> {maxHealth}");
+                break;
+            case 3: // Upgrade 3: 1.5x todos os atributos
+                moveSpeed *= 1.5f;
+                maxFuel *= 1.5f;
+                currentFuel = Mathf.Clamp(currentFuel, 0f, maxFuel);
+                maxHealth = Mathf.RoundToInt(maxHealth * 1.5f);
+                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                Debug.Log($"[LocomotiveController] Upgrade 3: 1.5x tudo. Speed={moveSpeed}, MaxFuel={maxFuel}, MaxHealth={maxHealth}");
+                break;
+        }
+    }
+
+    /// <summary>
     /// Aplica dano à locomotiva por ataque de fantasma raro ou colisão com rocha.
     /// </summary>
     /// <param name="damageAmount">Quantidade de dano recebido</param>
@@ -189,6 +246,15 @@ public class LocomotiveController : MonoBehaviour
         {
             TriggerDefeat();
         }
+    }
+
+    /// <summary>
+    /// Cura a locomotiva, restaurando vida sem ultrapassar o máximo.
+    /// </summary>
+    public void Heal(int amount)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        Debug.Log($"[LocomotiveController] Locomotiva curada em +{amount}. Saúde: {currentHealth}/{maxHealth}");
     }
 
     /// <summary>
