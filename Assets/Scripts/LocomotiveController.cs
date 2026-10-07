@@ -287,7 +287,8 @@ public class LocomotiveController : MonoBehaviour
         if (destructible != null)
         {
             TakeDamage(1);
-            Destroy(other.gameObject);
+            //Destroy(other.gameObject);
+            moveSpeed *= 0.5f;
             StopEngine();
         }
 
@@ -304,6 +305,15 @@ public class LocomotiveController : MonoBehaviour
         //    if (!isEngineOn) return;
         //    OnGhostCollision(ghost.gameObject);
         //}
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        DestructibleObject destructible = other.GetComponent<DestructibleObject>();
+        if (destructible != null)
+        {
+            StopEngine();
+        }
     }
 
     private void OnTriggerExit(Collider other)

@@ -731,7 +731,7 @@ MonoBehaviour:
   moveSpeed: 0.7
   attackDamage: 4
   attackCooldown: 2
-  attackRadius: 2
+  attackRadius: 2.5
   giantMinionPrefab: {fileID: 0}
   giantMiniaturePrefab: {fileID: 9189216206886678350, guid: 403aca75689ce3c45a4f7605cc746b14, type: 3}
   drop1: {fileID: 7827940386853121128, guid: 81eba990e7607a3468defe294fea81a4, type: 3}
