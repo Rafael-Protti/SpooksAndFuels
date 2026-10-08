@@ -47,6 +47,7 @@ public class LocomotiveController : MonoBehaviour
     public bool IsEngineOn => isEngineOn;
     public float InteractionRadius => interactionRadius;
     public TrackPath TrackPathRef => trackPath;
+    public float CurrentDistance => currentDistance;
 
     private void Awake()
     {
