@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6705257731378531176}
   - component: {fileID: 8367815377346984392}
   - component: {fileID: 8902572372330104693}
+  - component: {fileID: 1392832282656679495}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -209,6 +210,24 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &1392832282656679495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6719705168385081125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7545949644331987678
 GameObject:
   m_ObjectHideFlags: 0
