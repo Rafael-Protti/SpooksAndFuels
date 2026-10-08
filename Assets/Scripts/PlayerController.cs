@@ -375,28 +375,38 @@ public class PlayerController : MonoBehaviour
                 var playerItems = GetComponent<PlayerItems>();
                 var currentSlot = playerItems.inventory[playerItems.selectedSlot];
 
+                bool itemUsed = false;
                 if (!currentSlot.isTool && currentSlot.count > 0)
                 {
                     if (currentSlot.itemType == PlayerItems.ItemType.Wood)
                     {
-                        locomotive.Refuel(10);
+                        locomotive.Refuel(5);
                         playerItems.AddItem(PlayerItems.ItemType.Wood, -1);
+                        itemUsed = true;
                     }
                     else if (currentSlot.itemType == PlayerItems.ItemType.Ectoplasm)
                     {
-                        locomotive.Refuel(2);
+                        locomotive.Refuel(10);
                         playerItems.AddItem(PlayerItems.ItemType.Ectoplasm, -1);
+                        itemUsed = true;
                     }
                     else if (currentSlot.itemType == PlayerItems.ItemType.SuperEctoplasm)
                     {
-                        locomotive.Refuel(5, true);
+                        locomotive.Refuel(20, true);
                         playerItems.AddItem(PlayerItems.ItemType.SuperEctoplasm, -1);
+                        itemUsed = true;
                     }
                     else if (currentSlot.itemType == PlayerItems.ItemType.Iron)
                     {
                         locomotive.Heal(1);
                         playerItems.AddItem(PlayerItems.ItemType.Iron, -1);
+                        itemUsed = true;
                     }
+                }
+
+                if (!itemUsed)
+                {
+                    locomotive.ToggleBoarding(this);
                 }
                 return;
             }

@@ -35,6 +35,12 @@ public class LocomotiveController : MonoBehaviour
     [Tooltip("Distância máxima para o jogador interagir com a locomotiva")]
     [SerializeField] private float interactionRadius = 4.0f;
 
+    [Tooltip("Posição para onde o jogador é teleportado ao entrar na locomotiva")]
+    [SerializeField] private Transform entryPosition;
+
+    [Tooltip("Posição para onde o jogador é teleportado ao sair da locomotiva")]
+    [SerializeField] private Transform exitPosition;
+
     private int currentHealth;
     private float currentFuel;
     private bool playerAboard;
@@ -48,6 +54,34 @@ public class LocomotiveController : MonoBehaviour
     public float InteractionRadius => interactionRadius;
     public TrackPath TrackPathRef => trackPath;
     public float CurrentDistance => currentDistance;
+    public bool IsPlayerAboard => playerAboard;
+
+    public void ToggleBoarding(PlayerController player)
+    {
+        playerAboard = !playerAboard;
+        if (playerAboard)
+        {
+            if (entryPosition != null)
+            {
+                CharacterController cc = player.GetComponent<CharacterController>();
+                if (cc != null) cc.enabled = false;
+                player.transform.position = entryPosition.position;
+                if (cc != null) cc.enabled = true;
+            }
+            StartEngine();
+        }
+        else
+        {
+            if (exitPosition != null)
+            {
+                CharacterController cc = player.GetComponent<CharacterController>();
+                if (cc != null) cc.enabled = false;
+                player.transform.position = exitPosition.position;
+                if (cc != null) cc.enabled = true;
+            }
+            StopEngine();
+        }
+    }
 
     private void Awake()
     {
@@ -63,26 +97,29 @@ public class LocomotiveController : MonoBehaviour
             interactable = gameObject.AddComponent<InteractableObject>();
         }
 
-        // Texto dinâmico: "Consertar" ao segurar Ferro, "Abastecer" para os demais
+        // Texto dinâmico: "Consertar" ao segurar Ferro, "Abastecer" para os demais itens,
+        // e "Sair" ou "Entrar" quando não estiver segurando itens que interagem com ela.
         interactable.SetDynamicActionTextProvider(() =>
         {
-            if (player == null) return "Abastecer";
+            if (player == null) return playerAboard ? "Sair" : "Entrar";
             var slot = player.playerItems.inventory[player.playerItems.selectedSlot];
-            if (!slot.isTool && slot.itemType == PlayerItems.ItemType.Iron)
-                return "Consertar";
-            return "Abastecer";
+            
+            if (!slot.isTool && slot.count > 0)
+            {
+                if (slot.itemType == PlayerItems.ItemType.Iron)
+                    return "Consertar";
+                if (slot.itemType == PlayerItems.ItemType.Ectoplasm || 
+                    slot.itemType == PlayerItems.ItemType.SuperEctoplasm || 
+                    slot.itemType == PlayerItems.ItemType.Wood)
+                    return "Abastecer";
+            }
+            return playerAboard ? "Sair" : "Entrar";
         });
 
-        // Visibilidade condicional: só mostra o prompt ao segurar itens usáveis na locomotiva
+        // Visibilidade condicional: sempre visível agora, para permitir Entrar/Sair
         interactable.SetVisibilityCondition(() =>
         {
-            if (player == null) return false;
-            var slot = player.playerItems.inventory[player.playerItems.selectedSlot];
-            if (slot.isTool || slot.count <= 0) return false;
-            return slot.itemType == PlayerItems.ItemType.Ectoplasm
-                || slot.itemType == PlayerItems.ItemType.SuperEctoplasm
-                || slot.itemType == PlayerItems.ItemType.Wood
-                || slot.itemType == PlayerItems.ItemType.Iron;
+            return true;
         });
     }
 
@@ -293,12 +330,7 @@ public class LocomotiveController : MonoBehaviour
             StopEngine();
         }
 
-        PlayerController player = other.gameObject.GetComponent<PlayerController>();
-        if (player != null)
-        {
-            playerAboard = true;
-            ToggleEngine();
-        }
+        // Player entra e sai via botão de interação agora (ToggleBoarding)
 
         //GhostEnemy ghost = other.gameObject.GetComponent<GhostEnemy>();
         //if (ghost != null)
@@ -319,12 +351,6 @@ public class LocomotiveController : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerController player = other.gameObject.GetComponent<PlayerController>();
-        if (player != null)
-        {
-            playerAboard = false;
-            ToggleEngine();
-        }
     }
 
     /// <summary>

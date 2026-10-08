@@ -262,21 +262,21 @@ public class PlayerItems : MonoBehaviour
                 // TODO: Adicione uso do ectoplasma (abastecer locomotiva)
                 break;
             case ItemType.SuperEctoplasm:
-                if (loco != null)
-                {
-                    loco.Refuel(10f, true); // Abastece e aplica boost fixo
-                    AddItem(itemType, -1);  // Desconta 1 item do inventário
-                }
+                //if (loco != null)
+                //{
+                //    loco.Refuel(10f, true); // Abastece e aplica boost fixo
+                //    AddItem(itemType, -1);  // Desconta 1 item do inventário
+                //}
                 break;
             case ItemType.Stone:
                 // TODO: Adicione uso da pedra
                 break;
             case ItemType.Iron:
-                if (loco != null)
-                {
-                    loco.Heal(1);
-                    AddItem(itemType, -1);
-                }
+                //if (loco != null)
+                //{
+                //    loco.Heal(1);
+                //    AddItem(itemType, -1);
+                //}
                 break;
         }
     }
