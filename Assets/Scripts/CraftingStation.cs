@@ -40,6 +40,7 @@ public class CraftingStation : MonoBehaviour
     private int currentTierIndex = 0;
     private InteractableObject interactableObject;
     private PlayerItems playerItems; // Referência ao inventário do jogador
+    public Transform display;
 
     private void Awake()
     {
@@ -141,7 +142,9 @@ public class CraftingStation : MonoBehaviour
             {
                 playerItems.AddTool(toolItem);
             }
+            display.transform.GetComponent<Outline>().enabled = false;
             // Primeiro craft de ferramenta não tem buff adicional – a ferramenta em si é o upgrade
+
             return;
         }
 

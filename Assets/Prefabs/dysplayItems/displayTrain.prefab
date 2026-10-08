@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1741632686626222768}
   - component: {fileID: 2473749906729496259}
   - component: {fileID: 4721590819908831847}
+  - component: {fileID: 3029264828039122716}
   m_Layer: 0
   m_Name: displayTrain
   m_TagString: Untagged
@@ -128,6 +129,24 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &3029264828039122716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272986875024548653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 0.3046733, g: 1, b: 0, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &3245061902884935567
 GameObject:
   m_ObjectHideFlags: 0
