@@ -110,10 +110,16 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         CheckGroundStatus();
-        HandleMovingPlatform();
         HandleMovement();
         ApplyGravity();
         CheckNearestInteractable();
+    }
+
+    private void LateUpdate()
+    {
+        // Acompanhar a locomotiva no LateUpdate garante que a plataforma já se moveu neste frame,
+        // removendo os tremores e atrasos de sincronização.
+        HandleMovingPlatform();
     }
 
     /// <summary>
@@ -154,7 +160,7 @@ public class PlayerController : MonoBehaviour
         if (hitPlatform != currentMovingPlatform)
         {
             currentMovingPlatform = hitPlatform;
-            transform.SetParent(currentMovingPlatform); // Null remove o parentesco
+            // transform.SetParent(currentMovingPlatform); // REMOVIDO: CharacterController conflita com parenting
             if (currentMovingPlatform != null)
             {
                 lastPlatformPosition = currentMovingPlatform.position;
@@ -177,7 +183,7 @@ public class PlayerController : MonoBehaviour
         Vector3 rotatedPoint = platformDeltaRot * pointRelativeToPlatform;
         Vector3 rotationDeltaPos = rotatedPoint - pointRelativeToPlatform;
 
-        Vector3 totalDeltaPos = platformDeltaPos; //+ rotationDeltaPos;
+        Vector3 totalDeltaPos = platformDeltaPos + rotationDeltaPos;
 
         if (totalDeltaPos.sqrMagnitude > 0.0000001f)
         {

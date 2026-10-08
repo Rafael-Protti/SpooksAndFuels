@@ -249,13 +249,17 @@ public class LocomotiveController : MonoBehaviour
                 Debug.Log($"[LocomotiveController] Upgrade 0: Velocidade 2x -> {moveSpeed}");
                 break;
             case 1: // Upgrade 1: 2x combustível máximo
+                float oldMaxFuel = maxFuel;
                 maxFuel *= 2f;
                 currentFuel = Mathf.Clamp(currentFuel, 0f, maxFuel);
+                currentFuel = currentFuel * maxFuel / oldMaxFuel;
                 Debug.Log($"[LocomotiveController] Upgrade 1: Combustível máximo 2x -> {maxFuel}");
                 break;
             case 2: // Upgrade 2: 2x vida máxima
+                int oldHealth = maxHealth;
                 maxHealth *= 2;
                 currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                currentHealth = currentHealth * maxHealth / oldHealth;
                 Debug.Log($"[LocomotiveController] Upgrade 2: Vida máxima 2x -> {maxHealth}");
                 break;
             case 3: // Upgrade 3: 1.5x todos os atributos
