@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5198058235434007686}
   - component: {fileID: 8862419212055580964}
   - component: {fileID: 2948265917296878572}
+  - component: {fileID: 2646340565925802531}
   m_Layer: 0
   m_Name: woodBarrel
   m_TagString: Untagged
@@ -110,6 +111,27 @@ MonoBehaviour:
   hitShakeDuration: 0.25
   drop1: {fileID: 2575625426565695014, guid: 62dc77e9f3f583c49b59e84d7967b66c, type: 3}
 --- !u!65 &2948265917296878572
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6819398961856447918}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9111942, y: 1.006453, z: 0.9196851}
+  m_Center: {x: 0.020922378, y: 0.50305426, z: 0.003451541}
+--- !u!65 &2646340565925802531
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1308809043982067646}
   - component: {fileID: 9126089297155461131}
   - component: {fileID: 4976582261188555640}
+  - component: {fileID: 7757338988789675876}
   m_Layer: 0
   m_Name: woodLog
   m_TagString: Untagged
@@ -110,6 +111,27 @@ MonoBehaviour:
   hitShakeDuration: 0.25
   drop1: {fileID: 2575625426565695014, guid: 62dc77e9f3f583c49b59e84d7967b66c, type: 3}
 --- !u!65 &4976582261188555640
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8413938698787769296}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.968001, y: 0.6668974, z: 3.1969485}
+  m_Center: {x: -0.13365525, y: 0.3305055, z: 0.07689589}
+--- !u!65 &7757338988789675876
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

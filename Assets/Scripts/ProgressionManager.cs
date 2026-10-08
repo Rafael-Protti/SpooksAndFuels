@@ -2,15 +2,19 @@ using UnityEngine;
 
 public class ProgressionManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public Transform wagons;
+    public static ProgressionManager pg;
+    int step = 1;
+
+    public void NextStep()
     {
+        if (step == 1) FirstStep();
         
+        step++;
     }
 
-    // Update is called once per frame
-    void Update()
+    void FirstStep()
     {
-        
+        wagons.transform.gameObject.SetActive(true);
     }
 }

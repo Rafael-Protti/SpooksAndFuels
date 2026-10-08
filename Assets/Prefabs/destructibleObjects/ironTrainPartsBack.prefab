@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5130188937136184105}
   - component: {fileID: 1384299108119812872}
   - component: {fileID: 974968555765688182}
+  - component: {fileID: 4365212690152423707}
   m_Layer: 0
   m_Name: ironTrainPartsBack
   m_TagString: Untagged
@@ -79361,11 +79362,32 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.654669, y: 6.2940784, z: 5.555825}
+  m_Center: {x: 0, y: -0.0000007152559, z: 0.00000047683716}
+--- !u!65 &4365212690152423707
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722827576831735730}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.654669, y: 6.2940784, z: 5.555825}
-  m_Center: {x: 0, y: -0.0000007152559, z: 0.00000047683716}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

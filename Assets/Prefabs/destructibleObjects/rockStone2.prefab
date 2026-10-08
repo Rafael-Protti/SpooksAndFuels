@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4602423209407215437}
   - component: {fileID: 887178734056669047}
   - component: {fileID: 1587418624941476048}
+  - component: {fileID: 5804964395306101677}
   m_Layer: 0
   m_Name: rockStone2
   m_TagString: Untagged
@@ -105,9 +106,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -130,3 +131,24 @@ MonoBehaviour:
   hitShakeMagnitude: 0.15
   hitShakeDuration: 0.25
   drop1: {fileID: 4788713017828863329, guid: 29526ae955b5fe84b8d9123f341a2ea9, type: 3}
+--- !u!65 &5804964395306101677
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3090290748813314709}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.4133112, y: 0.9348276, z: 1.4751803}
+  m_Center: {x: 0.08824539, y: 0.4318973, z: 0.19663972}

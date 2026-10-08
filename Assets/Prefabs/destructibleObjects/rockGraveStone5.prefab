@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 268562905402022861}
   - component: {fileID: -5161473116127088991}
   - component: {fileID: 6609838661812815273}
+  - component: {fileID: 3135523667503748213}
   m_Layer: 0
   m_Name: rockGraveStone5
   m_TagString: Untagged
@@ -105,9 +106,9 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -130,3 +131,24 @@ MonoBehaviour:
   hitShakeMagnitude: 0.15
   hitShakeDuration: 0.25
   drop1: {fileID: 4788713017828863329, guid: 29526ae955b5fe84b8d9123f341a2ea9, type: 3}
+--- !u!65 &3135523667503748213
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5418718688176529685}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.6059435, y: 0.75011945, z: 0.40395644}
+  m_Center: {x: 0.000029444695, y: 0.3522873, z: 0.0000007599592}

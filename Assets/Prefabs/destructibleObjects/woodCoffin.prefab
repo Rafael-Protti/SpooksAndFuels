@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 8614871513536942625}
   - component: {fileID: 186546155593365750}
   - component: {fileID: 8938648628216570219}
+  - component: {fileID: -5543151129769939330}
   m_Layer: 0
   m_Name: woodCoffin
   m_TagString: Untagged
@@ -233,6 +234,27 @@ MonoBehaviour:
   hitShakeDuration: 0.25
   drop1: {fileID: 2575625426565695014, guid: 62dc77e9f3f583c49b59e84d7967b66c, type: 3}
 --- !u!65 &8938648628216570219
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8782196659979166570}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &-5543151129769939330
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

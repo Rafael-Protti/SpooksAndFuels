@@ -1,14 +1,18 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Gerenciador de spawn aleatório de inimigos (Fantasmas Comuns e Raros).
-/// Permite ajustar a probabilidade no Inspector (rareGhostProbability) e garante que
-/// os inimigos não nasçam próximos do jogador nem da locomotiva.
+/// Gerenciador de spawn de inimigos em pontos pré-definidos na cena (wave system).
+/// Os fantasmas spawnam periodicamente em objetos da lista de spawn points.
+/// O spawn para quando o número necessário de derrotas é atingido.
 /// </summary>
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Spawn Prefabs")]
+    [Header("Spawn Points")]
+    [Tooltip("Lista de objetos na cena onde os fantasmas podem spawnar")]
+    [SerializeField] private List<Transform> spawnPoints = new List<Transform>();
+
+    [Header("Spawn Prefabs & Probabilidades")]
     [Tooltip("Prefab do fantasma comum")]
     [SerializeField] private GameObject commonGhostPrefab;
 
@@ -21,63 +25,94 @@ public class EnemySpawner : MonoBehaviour
     [Tooltip("Prefab do fantasma gigante")]
     [SerializeField] private GameObject giantGhostPrefab;
 
-    [Header("Probability & Frequency Settings")]
-    [Tooltip("Intervalo de tempo entre as tentativas de spawn (em segundos)")]
-    [SerializeField] private float spawnInterval = 4.0f;
+    [Header("Probabilidades de Spawn")]
+    [Tooltip("Probabilidade de spawnar um fantasma COMUM (0 = desativado)")]
+    [Range(0f, 1f)]
+    [SerializeField] private float commonGhostProbability = 0.6f;
 
-    [Tooltip("Probabilidade de spawnar um fantasma RARO (0.0 = 0% até 1.0 = 100%). Ajustável no Inspector.")]
+    [Tooltip("Probabilidade de spawnar um fantasma RARO (0 = desativado)")]
     [Range(0f, 1f)]
     [SerializeField] private float rareGhostProbability = 0.2f;
 
-    [Tooltip("Probabilidade de spawnar um fantasma FRÁGIL")]
+    [Tooltip("Probabilidade de spawnar um fantasma FRÁGIL (0 = desativado)")]
     [Range(0f, 1f)]
     [SerializeField] private float fragileGhostProbability = 0.15f;
 
-    [Tooltip("Probabilidade de spawnar um fantasma GIGANTE")]
+    [Tooltip("Probabilidade de spawnar um fantasma GIGANTE (0 = desativado)")]
     [Range(0f, 1f)]
     [SerializeField] private float giantGhostProbability = 0.05f;
+
+    [Header("Frequência & Limites")]
+    [Tooltip("Intervalo de tempo entre as tentativas de spawn (em segundos)")]
+    [SerializeField] private float spawnInterval = 4.0f;
 
     [Tooltip("Número máximo de inimigos ativos no mapa simultaneamente")]
     [SerializeField] private int maxEnemiesAlive = 25;
 
-    [Header("Spawn Safety Restrictions")]
-    [Tooltip("Distância mínima do jogador para permitir o spawn")]
-    [SerializeField] private float minDistanceFromPlayer = 15.0f;
+    [Header("Wave Settings")]
+    [Tooltip("Quantos fantasmas precisam ser derrotados para completar a wave (0 = infinito)")]
+    [SerializeField] private int enemiesToDefeat = 10;
 
-    [Tooltip("Distância mínima da locomotiva para permitir o spawn")]
-    [SerializeField] private float minDistanceFromLocomotive = 15.0f;
+    [Header("Wave Trigger")]
+    [Tooltip("Waypoint do TrackPath que ativa a wave quando a locomotiva o alcança")]
+    [SerializeField] private Transform waveTriggerPoint;
 
-    [Header("Map Boundaries")]
-    [Tooltip("Limite de spawn no eixo X (do centro até o limite positivo/negativo)")]
-    [SerializeField] private float mapLimitX = 100.0f;
+    [Tooltip("Distância mínima da locomotiva ao ponto de trigger para iniciar a wave")]
+    [SerializeField] private float triggerDistance = 5f;
 
-    [Tooltip("Limite de spawn no eixo Z (do centro até o limite positivo/negativo)")]
-    [SerializeField] private float mapLimitZ = 100.0f;
+    [Header("Spawn Height")]
+    [Tooltip("Habilitar para forçar uma altura Y específica no momento do spawn (ignorando o Y do spawn point)")]
+    [SerializeField] private bool overrideSpawnHeight = false;
 
-    [Tooltip("Altura Y para o nascimento dos fantasmas voadores")]
+    [Tooltip("A altura Y na qual os fantasmas irão nascer se a opção acima estiver ligada")]
     [SerializeField] private float spawnHeightY = 1.5f;
 
-    // Referências dos alvos
-    private PlayerController player;
-    private LocomotiveController locomotive;
-    private float spawnTimer;
+    [Header("Gate")]
+    [Tooltip("Portão que abre ao completar a wave (deve ter o script GateController)")]
+    [SerializeField] private GateController gateToOpen;
 
-    public float RareGhostProbability
-    {
-        get => rareGhostProbability;
-        set => rareGhostProbability = Mathf.Clamp01(value);
-    }
+    [Header("Encadeamento de Waves")]
+    [Tooltip("Próximo spawner a ser ativado quando esta wave for concluída (deixe vazio se for a última)")]
+    [SerializeField] private EnemySpawner nextSpawner;
+
+    private float spawnTimer;
+    private int currentSpawnPointIndex = 0;
+    private int enemiesDefeated = 0;
+    private bool waveComplete = false;
+    private bool waveStarted = false;
+    private LocomotiveController locomotive;
+
+    // Propriedades públicas para a UI
+    public int EnemiesToDefeat => enemiesToDefeat;
+    public int EnemiesDefeated => enemiesDefeated;
+    public bool IsWaveComplete => waveComplete;
+    public bool IsWaveStarted => waveStarted;
+
+    public static EnemySpawner Instance { get; private set; }
 
     private void Awake()
     {
-        player = Object.FindAnyObjectByType<PlayerController>();
-        locomotive = Object.FindAnyObjectByType<LocomotiveController>();
+        // O primeiro spawner ativo se torna a instância
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+
+        if (enemiesToDefeat == 0) TriggerWaveWin();
     }
 
     private void Update()
     {
-        if (player == null) player = Object.FindAnyObjectByType<PlayerController>();
-        if (locomotive == null) locomotive = Object.FindAnyObjectByType<LocomotiveController>();
+        if (waveComplete) return;
+
+        // Verificar se a wave deve iniciar (trigger por waypoint)
+        if (!waveStarted)
+        {
+            CheckWaveTrigger();
+            return;
+        }
+
+        if (spawnPoints.Count == 0) return;
 
         spawnTimer += Time.deltaTime;
         if (spawnTimer >= spawnInterval)
@@ -88,132 +123,154 @@ public class EnemySpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// Tenta encontrar uma posição válida no mapa e instanciar um fantasma (Comum ou Raro).
+    /// Verifica se a locomotiva chegou ao ponto de trigger para iniciar a wave.
+    /// Se não houver trigger point configurado, a wave inicia imediatamente.
+    /// </summary>
+    private void CheckWaveTrigger()
+    {
+        if (waveTriggerPoint == null)
+        {
+            waveStarted = true;
+            Debug.Log("[EnemySpawner] Wave iniciada (sem trigger point configurado).");
+            return;
+        }
+
+        if (locomotive == null)
+        {
+            locomotive = Object.FindAnyObjectByType<LocomotiveController>();
+            if (locomotive == null) return;
+        }
+
+        float dist = Vector3.Distance(locomotive.transform.position, waveTriggerPoint.position);
+        if (dist <= triggerDistance)
+        {
+            waveStarted = true;
+            Debug.Log("[EnemySpawner] Locomotiva alcançou o ponto de trigger! Wave iniciada.");
+        }
+    }
+
+    /// <summary>
+    /// Tenta spawnar um fantasma em um dos pontos da lista.
     /// </summary>
     public void TrySpawnEnemy()
     {
+        if (waveComplete) return;
+
         // Checar contagem atual de inimigos no mapa
         GhostEnemy[] currentGhosts = Object.FindObjectsByType<GhostEnemy>(FindObjectsInactive.Exclude);
         if (currentGhosts.Length >= maxEnemiesAlive) return;
 
-        Vector3 spawnPosition;
-        if (TryGetValidSpawnPosition(out spawnPosition))
+        // Construir lista de tipos disponíveis (probabilidade > 0 e prefab atribuído)
+        List<(GameObject prefab, float weight, string name)> availableTypes = new List<(GameObject, float, string)>();
+
+        if (commonGhostProbability > 0f && commonGhostPrefab != null)
+            availableTypes.Add((commonGhostPrefab, commonGhostProbability, "GhostEnemy_Common"));
+
+        if (rareGhostProbability > 0f && rareGhostPrefab != null)
+            availableTypes.Add((rareGhostPrefab, rareGhostProbability, "GhostEnemy_Rare"));
+
+        if (fragileGhostProbability > 0f && fragileGhostPrefab != null)
+            availableTypes.Add((fragileGhostPrefab, fragileGhostProbability, "GhostEnemy_Fragile"));
+
+        if (giantGhostProbability > 0f && giantGhostPrefab != null)
+            availableTypes.Add((giantGhostPrefab, giantGhostProbability, "GhostEnemy_Giant"));
+
+        if (availableTypes.Count == 0) return;
+
+        // Calcular peso total para normalizar
+        float totalWeight = 0f;
+        foreach (var t in availableTypes)
         {
-            // Sortear com base na probabilidade configurada no Inspector
-            float roll = Random.value;
-            GameObject prefabToSpawn = commonGhostPrefab;
-            string ghostName = "GhostEnemy_Common";
-            GhostType fallbackType = GhostType.Common;
+            totalWeight += t.weight;
+        }
 
-            if (roll < giantGhostProbability)
+        // Sortear tipo com base nos pesos normalizados
+        float roll = Random.value * totalWeight;
+        float accumulated = 0f;
+        GameObject prefabToSpawn = availableTypes[0].prefab;
+        string ghostName = availableTypes[0].name;
+
+        foreach (var t in availableTypes)
+        {
+            accumulated += t.weight;
+            if (roll <= accumulated)
             {
-                prefabToSpawn = giantGhostPrefab;
-                ghostName = "GhostEnemy_Giant";
-                fallbackType = GhostType.Giant;
+                prefabToSpawn = t.prefab;
+                ghostName = t.name;
+                break;
             }
-            else if (roll < giantGhostProbability + rareGhostProbability)
+        }
+
+        // Escolher o próximo spawn point (ciclando pela lista)
+        Transform spawnPoint = spawnPoints[currentSpawnPointIndex];
+        currentSpawnPointIndex = (currentSpawnPointIndex + 1) % spawnPoints.Count;
+
+        if (spawnPoint != null && prefabToSpawn != null)
+        {
+            Vector3 spawnPos = spawnPoint.position;
+            if (overrideSpawnHeight)
             {
-                prefabToSpawn = rareGhostPrefab;
-                ghostName = "GhostEnemy_Rare";
-                fallbackType = GhostType.Rare;
-            }
-            else if (roll < giantGhostProbability + rareGhostProbability + fragileGhostProbability)
-            {
-                prefabToSpawn = fragileGhostPrefab;
-                ghostName = "GhostEnemy_Fragile";
-                fallbackType = GhostType.Fragile;
+                spawnPos.y = spawnHeightY;
             }
 
-            if (prefabToSpawn != null)
-            {
-                GameObject newEnemy = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
-                newEnemy.name = ghostName;
-            }
-            else
-            {
-                // Fallback: criar um objeto com o componente GhostEnemy dinamicamente se o prefab não estiver atribuído
-                CreatePlaceholderGhost(spawnPosition, fallbackType);
-            }
+            GameObject newEnemy = Instantiate(prefabToSpawn, spawnPos, spawnPoint.rotation);
+            newEnemy.name = ghostName;
         }
     }
 
     /// <summary>
-    /// Tenta gerar uma posição aleatória no mapa respeitando as distâncias mínimas do jogador e da locomotiva.
+    /// Chamado quando um fantasma é derrotado. Incrementa o contador e verifica se a wave foi concluída.
     /// </summary>
-    private bool TryGetValidSpawnPosition(out Vector3 validPosition)
+    public void OnEnemyDefeated()
     {
-        validPosition = Vector3.zero;
-        int maxAttempts = 15;
+        enemiesDefeated++;
 
-        for (int i = 0; i < maxAttempts; i++)
+        if (enemiesToDefeat > 0 && enemiesDefeated >= enemiesToDefeat)
         {
-            float randomX = Random.Range(-mapLimitX, mapLimitX);
-            float randomZ = Random.Range(-mapLimitZ, mapLimitZ);
-            Vector3 candidatePos = new Vector3(randomX, spawnHeightY, randomZ);
+            waveComplete = true;
+            Debug.Log("[EnemySpawner] Wave concluída! Todos os inimigos necessários foram derrotados.");
 
-            // Validar distância do jogador
-            if (player != null)
-            {
-                float distPlayer = Vector3.Distance(candidatePos, player.transform.position);
-                if (distPlayer < minDistanceFromPlayer) continue;
-            }
+            // Abrir o portão ao concluir a wave
+            TriggerWaveWin();
+        }
+    }
 
-            // Validar distância da locomotiva
-            if (locomotive != null)
-            {
-                float distLoco = Vector3.Distance(candidatePos, locomotive.transform.position);
-                if (distLoco < minDistanceFromLocomotive) continue;
-            }
-
-            // Posição válida encontrada!
-            validPosition = candidatePos;
-            return true;
+    void TriggerWaveWin()
+    {
+        if (gateToOpen != null)
+        {
+            gateToOpen.OpenGate();
         }
 
-        return false;
+        // Desativar este spawner e ativar o próximo
+        if (nextSpawner != null)
+        {
+            Instance = nextSpawner;
+            nextSpawner.gameObject.SetActive(true);
+        }
+        gameObject.SetActive(false);
     }
 
     /// <summary>
-    /// Cria um fantasma placeholder visual com GhostEnemy configurado se nenhum prefab estiver selecionado no Inspector.
+    /// Reinicia a wave com novos parâmetros (útil para múltiplas waves).
     /// </summary>
-    private void CreatePlaceholderGhost(Vector3 position, GhostType type)
+    public void ResetWave(int newEnemiesToDefeat)
     {
-        GameObject ghostObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        ghostObj.name = "GhostEnemy_" + type.ToString();
-        ghostObj.transform.position = position;
-        
-        float scale = 0.9f;
-        if (type == GhostType.Rare) scale = 1.3f;
-        else if (type == GhostType.Giant) scale = 2.5f;
-        else if (type == GhostType.Fragile) scale = 0.6f;
-
-        ghostObj.transform.localScale = new Vector3(scale, scale, scale);
-
-        // Ajustar colisor para ser Trigger
-        Collider col = ghostObj.GetComponent<Collider>();
-        if (col != null) col.isTrigger = true;
-
-        // Cor do fantasma
-        Renderer rend = ghostObj.GetComponent<Renderer>();
-        if (rend != null)
-        {
-            rend.material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            Color color = new Color(0.2f, 0.8f, 0.9f); // Comum (Ciano)
-            if (type == GhostType.Rare) color = new Color(0.8f, 0.1f, 0.9f); // Roxo
-            else if (type == GhostType.Giant) color = new Color(1f, 0.2f, 0.2f); // Vermelho
-            else if (type == GhostType.Fragile) color = new Color(0.8f, 0.9f, 0.9f); // Azul claro
-
-            rend.material.color = color;
-        }
-
-        GhostEnemy ghostScript = ghostObj.AddComponent<GhostEnemy>();
-        // Reflection ou SerializedObject pode ajustar ghostType, ou no Awake padrão
+        enemiesToDefeat = newEnemiesToDefeat;
+        enemiesDefeated = 0;
+        waveComplete = false;
     }
 
     private void OnDrawGizmosSelected()
     {
-        // Desenhar área do mapa
+        if (spawnPoints == null) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(Vector3.zero, new Vector3(mapLimitX * 2f, 2f, mapLimitZ * 2f));
+        foreach (var point in spawnPoints)
+        {
+            if (point != null)
+            {
+                Gizmos.DrawWireSphere(point.position, 0.75f);
+            }
+        }
     }
 }

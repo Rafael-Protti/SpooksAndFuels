@@ -461,6 +461,7 @@ GameObject:
   - component: {fileID: 5637347645046856347}
   - component: {fileID: 7537573290313709997}
   - component: {fileID: 6069363214783860337}
+  - component: {fileID: -5289305435240260451}
   m_Layer: 0
   m_Name: ironMineCart
   m_TagString: Untagged
@@ -508,6 +509,27 @@ MonoBehaviour:
   hitShakeDuration: 0.25
   drop1: {fileID: 7679644932334842590, guid: dc9f3143ec4aa4d4390c66819fcdf099, type: 3}
 --- !u!65 &6069363214783860337
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3877015793677103965}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &-5289305435240260451
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -200,6 +200,13 @@ public class GhostEnemy : MonoBehaviour
     public void OnDefeat()
     {
         DropLoot();
+
+        // Notificar o spawner para a contagem da wave
+        if (EnemySpawner.Instance != null)
+        {
+            EnemySpawner.Instance.OnEnemyDefeated();
+        }
+
         Destroy(transform.gameObject);
     }
 

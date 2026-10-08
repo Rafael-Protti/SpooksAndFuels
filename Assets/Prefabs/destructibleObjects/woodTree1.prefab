@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7835029046786933272}
   - component: {fileID: 9196757284868150145}
   - component: {fileID: 1904419516397899938}
+  - component: {fileID: -6248721911047333718}
   m_Layer: 0
   m_Name: woodTree1
   m_TagString: Untagged
@@ -110,6 +111,27 @@ MonoBehaviour:
   hitShakeDuration: 0.25
   drop1: {fileID: 2575625426565695014, guid: 62dc77e9f3f583c49b59e84d7967b66c, type: 3}
 --- !u!65 &1904419516397899938
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1339774162994022425}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.114702, y: 5.238118, z: 3.843919}
+  m_Center: {x: 0.3591621, y: 2.134727, z: -0.23518193}
+--- !u!65 &-6248721911047333718
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

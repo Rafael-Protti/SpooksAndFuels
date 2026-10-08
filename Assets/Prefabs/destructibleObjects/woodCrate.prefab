@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5154489833636062449}
   - component: {fileID: 3306252461384913397}
   - component: {fileID: 3386355567460299696}
+  - component: {fileID: 6663385920188819012}
   m_Layer: 8
   m_Name: woodCrate
   m_TagString: Untagged
@@ -110,6 +111,27 @@ MonoBehaviour:
   hitShakeDuration: 0.25
   drop1: {fileID: 2575625426565695014, guid: 62dc77e9f3f583c49b59e84d7967b66c, type: 3}
 --- !u!65 &3386355567460299696
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578232677831506268}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.60000145, y: 0.6000002, z: 0.6000016}
+  m_Center: {x: 0.000000014901161, y: 0.29999813, z: -0.000000044703484}
+--- !u!65 &6663385920188819012
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

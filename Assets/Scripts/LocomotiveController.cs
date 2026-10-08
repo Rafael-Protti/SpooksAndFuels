@@ -330,6 +330,12 @@ public class LocomotiveController : MonoBehaviour
             StopEngine();
         }
 
+        if(other.gameObject.layer == LayerMask.NameToLayer("Gate"))
+        {
+            //Destroy(other.gameObject);
+            moveSpeed *= 0.5f;
+        }
+
         // Player entra e sai via botão de interação agora (ToggleBoarding)
 
         //GhostEnemy ghost = other.gameObject.GetComponent<GhostEnemy>();
@@ -347,10 +353,11 @@ public class LocomotiveController : MonoBehaviour
         {
             StopEngine();
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Gate"))
+        {
+            StopEngine();
+        }
     }
 
     /// <summary>

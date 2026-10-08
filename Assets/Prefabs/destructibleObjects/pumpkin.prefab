@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 884925303415770196}
   - component: {fileID: 3867611124188085454}
   - component: {fileID: -3954421702624489069}
+  - component: {fileID: -5695240677733912204}
   m_Layer: 0
   m_Name: pumpkin
   m_TagString: Untagged
@@ -122,11 +123,32 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.22122774, z: 0.000000014901161}
+--- !u!65 &-5695240677733912204
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8384309582321424912}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.6149463, y: 0.44245547, z: 0.61494625}
   m_Center: {x: 0, y: 0.22122774, z: 0.000000014901161}
