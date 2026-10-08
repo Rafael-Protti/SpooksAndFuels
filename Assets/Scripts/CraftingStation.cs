@@ -24,6 +24,8 @@ public class CraftingStation : MonoBehaviour
     public class UpgradeTier
     {
         public string upgradeName;
+        [TextArea(2, 4)]
+        public string description;
         public List<ResourceRequirement> requirements;
     }
 

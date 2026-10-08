@@ -16,6 +16,9 @@ public class InteractionPromptUI : MonoBehaviour
     [Tooltip("Texto posicionado abaixo do ícone que descreve a ação (ex: 'Ligar', 'Desligar')")]
     [SerializeField] private Text actionText;
 
+    [Tooltip("Texto para exibir a descrição do craft/upgrade (Opcional)")]
+    [SerializeField] private Text descriptionText;
+
     [Tooltip("Container principal do prompt para ativar/desativar")]
     [SerializeField] private GameObject promptContainer;
 
@@ -25,6 +28,9 @@ public class InteractionPromptUI : MonoBehaviour
     
     [Tooltip("Prefab do ingrediente (deve conter o script RecipeIngredientUI)")]
     [SerializeField] private RecipeIngredientUI ingredientPrefab;
+
+    [Tooltip("Prefab do sinal de mais (+) a ser exibido entre múltiplos ingredientes")]
+    [SerializeField] private GameObject plusSignPrefab;
 
     [Tooltip("Mapeamento visual para os ícones de cada recurso")]
     [SerializeField] private ItemIcon[] itemIcons;
@@ -142,6 +148,11 @@ public class InteractionPromptUI : MonoBehaviour
         }
 
         // --- Lógica de Receita de Crafting ---
+        if (descriptionText != null)
+        {
+            descriptionText.text = ""; // Limpa por padrão
+        }
+
         if (recipeContainer != null)
         {
             // Limpa os ícones antigos
@@ -155,13 +166,28 @@ public class InteractionPromptUI : MonoBehaviour
             if (crafting != null && ingredientPrefab != null)
             {
                 var tier = crafting.GetCurrentTier();
-                if (tier != null && tier.requirements.Count > 0)
+                if (tier != null)
                 {
-                    recipeContainer.SetActive(true);
-                    foreach (var req in tier.requirements)
+                    if (descriptionText != null && !string.IsNullOrEmpty(tier.description))
                     {
-                        RecipeIngredientUI ing = Instantiate(ingredientPrefab, recipeContainer.transform);
-                        ing.Setup(GetIconFor(req.itemType), req.amount);
+                        descriptionText.text = tier.description;
+                    }
+
+                    if (tier.requirements.Count > 0)
+                    {
+                        recipeContainer.SetActive(true);
+                        for (int i = 0; i < tier.requirements.Count; i++)
+                        {
+                            var req = tier.requirements[i];
+                            RecipeIngredientUI ing = Instantiate(ingredientPrefab, recipeContainer.transform);
+                            ing.Setup(GetIconFor(req.itemType), req.amount);
+
+                            // Adiciona o sinal de '+' se não for o último ingrediente
+                            if (i < tier.requirements.Count - 1 && plusSignPrefab != null)
+                            {
+                                Instantiate(plusSignPrefab, recipeContainer.transform);
+                            }
+                        }
                     }
                 }
             }
