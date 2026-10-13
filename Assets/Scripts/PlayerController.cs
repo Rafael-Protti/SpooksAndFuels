@@ -117,9 +117,9 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
+        HandleMovingPlatform();
         // Acompanhar a locomotiva no LateUpdate garante que a plataforma já se moveu neste frame,
         // removendo os tremores e atrasos de sincronização.
-        HandleMovingPlatform();
     }
 
     /// <summary>
@@ -160,12 +160,12 @@ public class PlayerController : MonoBehaviour
         if (hitPlatform != currentMovingPlatform)
         {
             currentMovingPlatform = hitPlatform;
-            // transform.SetParent(currentMovingPlatform); // REMOVIDO: CharacterController conflita com parenting
-            if (currentMovingPlatform != null)
-            {
-                lastPlatformPosition = currentMovingPlatform.position;
-                lastPlatformRotation = currentMovingPlatform.rotation;
-            }
+            //// transform.SetParent(currentMovingPlatform); // REMOVIDO: CharacterController conflita com parenting
+            //if (currentMovingPlatform != null)
+            //{
+            //    lastPlatformPosition = currentMovingPlatform.position;
+            //    lastPlatformRotation = currentMovingPlatform.rotation;
+            //}
         }
     }
 
@@ -174,8 +174,9 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleMovingPlatform()
     {
-        if (currentMovingPlatform == null) return;
+        if(currentMovingPlatform == null) return;
 
+        // 1. Calcula o delta de posição normalmente
         Vector3 platformDeltaPos = currentMovingPlatform.position - lastPlatformPosition;
         Quaternion platformDeltaRot = currentMovingPlatform.rotation * Quaternion.Inverse(lastPlatformRotation);
 
@@ -185,8 +186,15 @@ public class PlayerController : MonoBehaviour
 
         Vector3 totalDeltaPos = platformDeltaPos + rotationDeltaPos;
 
-        if (totalDeltaPos.sqrMagnitude > 0.0000001f)
+        // 2. ADIÇÃO IMPORTANTE: 
+        // Se o CharacterController estiver aplicando gravidade ou atrito, 
+        // force o deslocamento exato da plataforma somando a velocidade dela 
+        // ou garantindo que o Move processe o vetor completo sem interferência de forças verticais.
+
+        if (totalDeltaPos != Vector3.zero)
         {
+            // O Move do CharacterController leva em conta colisões. 
+            // Passar o totalDeltaPos diretamente garante que ele acompanhe o delta exato.
             characterController.Move(totalDeltaPos);
         }
 
@@ -371,13 +379,6 @@ public class PlayerController : MonoBehaviour
             LocomotiveController locomotive = interactable.GetComponent<LocomotiveController>();
             if (locomotive != null)
             {
-                //if(currentEquippedItem != null)
-                //{
-                //    currentEquippedItem.AddCoal();
-                //    Destroy(currentEquippedItem.gameObject);
-                //    currentEquippedItem = null;
-                //    return;
-                //}
                 var playerItems = GetComponent<PlayerItems>();
                 var currentSlot = playerItems.inventory[playerItems.selectedSlot];
 
@@ -528,7 +529,6 @@ public class PlayerController : MonoBehaviour
         if(obj != null)
         {
             PickupItem(obj);
-            Debug.Log("Oie");
         }
     }
 }

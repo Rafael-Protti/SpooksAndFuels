@@ -64,6 +64,7 @@ public class LocomotiveController : MonoBehaviour
             if (entryPosition != null)
             {
                 CharacterController cc = player.GetComponent<CharacterController>();
+                cc.gameObject.transform.SetParent(transform);
                 if (cc != null) cc.enabled = false;
                 player.transform.position = entryPosition.position;
                 if (cc != null) cc.enabled = true;
@@ -75,6 +76,7 @@ public class LocomotiveController : MonoBehaviour
             if (exitPosition != null)
             {
                 CharacterController cc = player.GetComponent<CharacterController>();
+                cc.gameObject.transform.SetParent(null);
                 if (cc != null) cc.enabled = false;
                 player.transform.position = exitPosition.position;
                 if (cc != null) cc.enabled = true;
@@ -128,10 +130,10 @@ public class LocomotiveController : MonoBehaviour
         // Posicionar a locomotiva no início do trilho na inicialização
         UpdatePositionOnTrack();
     }
-
     private void Update()
     {
         HandleLocomotiveMovement();
+        
     }
 
     /// <summary>
@@ -330,14 +332,8 @@ public class LocomotiveController : MonoBehaviour
         {
             TakeDamage(1);
             //Destroy(other.gameObject);
-            moveSpeed *= 0.5f;
+            moveSpeed *= 0.75f;
             StopEngine();
-        }
-
-        if(other.gameObject.layer == LayerMask.NameToLayer("Gate"))
-        {
-            //Destroy(other.gameObject);
-            moveSpeed *= 0.5f;
         }
 
         // Player entra e sai via botão de interação agora (ToggleBoarding)

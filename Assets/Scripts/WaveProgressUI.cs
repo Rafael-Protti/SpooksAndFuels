@@ -33,7 +33,7 @@ public class WaveProgressUI : MonoBehaviour
         }
         else
         {
-            waveText.text = $"Derrote: {remaining}/{total} fastasmas";
+            waveText.text = $"Derrote: {total - remaining}/{total} fastasmas";
         }
     }
 }
