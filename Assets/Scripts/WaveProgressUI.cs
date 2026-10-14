@@ -8,20 +8,25 @@ using UnityEngine.UI;
 public class WaveProgressUI : MonoBehaviour
 {
     [Tooltip("Texto da UI que exibe o progresso da wave")]
+    [SerializeField] private RawImage waveContainer;
     [SerializeField] private Text waveText;
 
     private void Update()
     {
-        if (waveText == null || EnemySpawner.Instance == null) return;
+        if (waveContainer == null || EnemySpawner.Instance == null) return;
 
         // Oculta o texto caso a wave ainda não tenha iniciado
         if (!EnemySpawner.Instance.IsWaveStarted)
         {
-            waveText.enabled = false;
+            waveContainer.enabled = false;
+            waveContainer.transform.GetChild(0).GetComponent<Text>().enabled = false;
+            waveContainer.transform.GetChild(1).GetComponent<Text>().enabled = false;
             return;
         }
 
-        waveText.enabled = true;
+        waveContainer.enabled = true;
+        waveContainer.transform.GetChild(0).GetComponent<Text>().enabled = true;
+        waveContainer.transform.GetChild(1).GetComponent<Text>().enabled = true;
 
         int total = EnemySpawner.Instance.EnemiesToDefeat;
         int defeated = EnemySpawner.Instance.EnemiesDefeated;
@@ -33,7 +38,7 @@ public class WaveProgressUI : MonoBehaviour
         }
         else
         {
-            waveText.text = $"Derrote: {total - remaining}/{total} fastasmas";
+            waveText.text = $"{total - remaining}/{total}";
         }
     }
 }

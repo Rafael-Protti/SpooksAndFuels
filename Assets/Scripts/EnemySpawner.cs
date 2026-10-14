@@ -78,6 +78,7 @@ public class EnemySpawner : MonoBehaviour
     private float spawnTimer;
     private int currentSpawnPointIndex = 0;
     private int enemiesDefeated = 0;
+    private int enemiesSpawned = 0;
     private bool waveComplete = false;
     private bool waveStarted = false;
     private LocomotiveController locomotive;
@@ -154,7 +155,7 @@ public class EnemySpawner : MonoBehaviour
     /// </summary>
     public void TrySpawnEnemy()
     {
-        if (waveComplete) return;
+        if (waveComplete || enemiesSpawned >= enemiesToDefeat) return;
 
         // Checar contagem atual de inimigos no mapa
         GhostEnemy[] currentGhosts = Object.FindObjectsByType<GhostEnemy>(FindObjectsInactive.Exclude);
@@ -215,6 +216,7 @@ public class EnemySpawner : MonoBehaviour
 
             GameObject newEnemy = Instantiate(prefabToSpawn, spawnPos, spawnPoint.rotation);
             newEnemy.name = ghostName;
+            enemiesSpawned++;
         }
     }
 

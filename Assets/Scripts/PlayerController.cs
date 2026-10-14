@@ -160,12 +160,11 @@ public class PlayerController : MonoBehaviour
         if (hitPlatform != currentMovingPlatform)
         {
             currentMovingPlatform = hitPlatform;
-            //// transform.SetParent(currentMovingPlatform); // REMOVIDO: CharacterController conflita com parenting
-            //if (currentMovingPlatform != null)
-            //{
-            //    lastPlatformPosition = currentMovingPlatform.position;
-            //    lastPlatformRotation = currentMovingPlatform.rotation;
-            //}
+            if (currentMovingPlatform != null)
+            {
+                lastPlatformPosition = currentMovingPlatform.position;
+                lastPlatformRotation = currentMovingPlatform.rotation;
+            }
         }
     }
 
@@ -174,27 +173,21 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleMovingPlatform()
     {
-        if(currentMovingPlatform == null) return;
+        if (currentMovingPlatform == null) return;
 
-        // 1. Calcula o delta de posição normalmente
+        // 1. Calcula o delta de posição e rotação da plataforma neste frame
         Vector3 platformDeltaPos = currentMovingPlatform.position - lastPlatformPosition;
         Quaternion platformDeltaRot = currentMovingPlatform.rotation * Quaternion.Inverse(lastPlatformRotation);
 
-        Vector3 pointRelativeToPlatform = transform.position - currentMovingPlatform.position;
+        // Deslocamento circular decorrente da rotação da plataforma em torno do seu próprio pivô
+        Vector3 pointRelativeToPlatform = transform.position - lastPlatformPosition;
         Vector3 rotatedPoint = platformDeltaRot * pointRelativeToPlatform;
         Vector3 rotationDeltaPos = rotatedPoint - pointRelativeToPlatform;
 
         Vector3 totalDeltaPos = platformDeltaPos + rotationDeltaPos;
 
-        // 2. ADIÇÃO IMPORTANTE: 
-        // Se o CharacterController estiver aplicando gravidade ou atrito, 
-        // force o deslocamento exato da plataforma somando a velocidade dela 
-        // ou garantindo que o Move processe o vetor completo sem interferência de forças verticais.
-
         if (totalDeltaPos != Vector3.zero)
         {
-            // O Move do CharacterController leva em conta colisões. 
-            // Passar o totalDeltaPos diretamente garante que ele acompanhe o delta exato.
             characterController.Move(totalDeltaPos);
         }
 
@@ -209,6 +202,7 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>
     /// Processa o movimento 3D com base nos inputs recebidos.
+    /// Mantém o controle padrão em coordenadas de mundo (W = frente do mundo/tela).
     /// </summary>
     private void HandleMovement()
     {

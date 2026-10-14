@@ -64,7 +64,6 @@ public class LocomotiveController : MonoBehaviour
             if (entryPosition != null)
             {
                 CharacterController cc = player.GetComponent<CharacterController>();
-                cc.gameObject.transform.SetParent(transform);
                 if (cc != null) cc.enabled = false;
                 player.transform.position = entryPosition.position;
                 if (cc != null) cc.enabled = true;
@@ -76,7 +75,6 @@ public class LocomotiveController : MonoBehaviour
             if (exitPosition != null)
             {
                 CharacterController cc = player.GetComponent<CharacterController>();
-                cc.gameObject.transform.SetParent(null);
                 if (cc != null) cc.enabled = false;
                 player.transform.position = exitPosition.position;
                 if (cc != null) cc.enabled = true;
@@ -160,6 +158,7 @@ public class LocomotiveController : MonoBehaviour
 
         nextPos.y = transform.position.y;
         transform.position = nextPos;
+       
         transform.rotation = nextRot;
 
         if (isAtEnd)
